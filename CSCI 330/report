@@ -1,0 +1,93 @@
+#!/bin/bash
+
+#if the user interrupts, remove temp files and exit
+trap '/bin/rm -f report-awk-$$; /bin/rm -f output-$$; exit' 2
+
+#cat the output into a temp file until it cannot anymore
+#then go to section HERE
+cat << HERE > report-awk-$$
+
+#set the field seperator to /
+BEGIN	{
+	FS="/"
+	}
+
+#Main section
+{
+NF > 1
+#this checks if the file is the Associates file
+	{
+	#Set the associates array at the position of the userid
+	#to their name
+	Associates[\$1] = \$2
+	#Set the user position at the userid position
+	#to their position
+	Position[\$1] = \$4
+	}
+
+NF < 2
+	{
+	#Check to see if it is the Sales File
+	if ( \$0 ~ /,/ )
+		{
+		#Split the file using the ',' as a field seperator
+		split(\$0, sales, ",")
+		#this adds all the sales from 2008 together
+		if ( index(sales[3], "2008") )
+			{
+			indivsales[sales[4], sales[1]] += sales[2]
+			}
+		}
+	else
+	#this is the Products file by process of elimination
+		{
+		#Split the file using the ':' as a field seperator
+		split(\$0, products, ":")
+		#set the element number from the products array
+		#to the data in the products array at element 3
+		prod[products[1]] = products[3]
+		}
+	}	
+}
+
+END	{
+#After the data is formatted, This organizes the output before it is displayed
+	for ( user in Associates )
+		{
+		for ( useridprodid in indivsales )
+			{
+			#This splits the array using a character that
+			#the user will most likely never use
+			split(useridprodid, temparray, SUBSEP)
+			if ( index(temparray[1], user) )
+				{
+				#Add to the user's total each item they sold times
+				#the number of that item they sold
+				usertotal[user] = usertotal[user] + ( prod[temparray[2]] * indivsales[useridprodid] )
+				}
+			}
+		#As long as the user has a total sales above 0,
+		#Print out their information
+		if ( usertotal[user] > 0 )
+			{
+			#Display the data in the table
+			printf( "%-15s \t %-15s \t %7.2f\n", Associates[user], Position[user], usertotal[user])
+			}
+		}
+	}
+
+HERE
+#This is the output and gawk portion of the program
+#Display header and read the three files.
+#When it's done, remove the temp files
+	{
+	echo
+	echo "	            Marine Parts R US"
+	echo "	     2008 Associates Ranked by Sales"
+	echo "Name			 Position		 Sales"
+	echo "________________________________________________________"
+	gawk -f report-awk-$$ products sales associates | sort -nr -k4 >> output-$$
+	cat output-$$
+	rm -f report-awk-$$
+	rm -f output-$$
+	}

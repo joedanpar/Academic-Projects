@@ -1,0 +1,101 @@
+#! /bin/sh
+#  Usage: wordspell "filename"
+#  Input: wordspell filename
+#  Author:  Joe Dan Parker
+#  ZID:     Z158012
+clear 
+
+trap 'cleanup' 2 3
+
+#Cleanup Function: removes unnecessary files after the script has been run.
+cleanup()
+	{
+	/bin/rm -f /tmp/size1-$$
+	/bin/rm -f /tmp/size2-$$
+	/bin/rm -f /tmp/tempfile-$$
+	exit
+	}
+
+#Create the memory file in the home directory if it does not yet exist.
+touch /$HOME/memory
+#find the incorrectly spelled words found within the file given as the first argument,
+#store them into the temp directory, in a file named tempfile-##.
+ispell -p /$HOME/memory -l < $1 > /tmp/tempfile-$$
+#place the contents of tempfile## into the variable "wordlist".
+wordlist=`cat /tmp/tempfile-$$`
+
+#initiate variables tempword and mem.
+tempword=()
+mem=()
+
+#display the prompt to correct each misspelled word, one at a time.
+for word in $wordlist
+	do
+	echo "'"$wordlist"'" is spelled incorrectly.
+	echo -n Press the 'Enter' key to keep this spelling,
+	echo -n or type a correction here: 
+
+	#read in the user's response to the prompt
+	read response
+
+	echo "__________________________________________________"
+ 
+	#If the user pressees the enter key, just add the misspelled word into the variable mem.
+	#if they correct their mistake, add both the original and the corrected forms to the
+	#variable tempword.  They are added in order so that when they are displayed, they can be
+	#accessed in the same order, shown below.
+	case $response in
+		*?)
+			tempword=(${tempword[*]} ${word[*]})			
+			tempword=(${tempword[*]} ${response[*]});;
+		*)
+			mem=(${mem[*]} ${word[*]});;
+	esac
+	done
+
+#This adds the correctly spelled word(s) from the previous loop to the memory file.
+for case in ${mem[*]}
+	do
+	echo $case >> $HOME/memory
+	done
+
+#This creates two temp files if they do not yet exist. (they shouldn't since they are
+#removed at the end of the script.)
+touch /tmp/size1-$$
+touch /tmp/size2-$$
+
+#this stores each of the words in the variable tempword into the first tempfile.
+echo ${tempword[*]} > /tmp/size1-$$
+
+#This displays the contents of the temp file, counts the number of words,
+#and inserts that number into the next tempfile
+cat /tmp/size1-$$ | wc -w > /tmp/size2-$$
+
+#This displays the report of misspelled words and their corrected forms.
+echo MISSPELLED "		"CORRECTED WORD
+echo "__________________________________________________"
+
+#This sets the first temp file to the contents of the second, which is the
+#number of words in the variable tempfile, as well as initializing a temp counter
+#for the next step.
+let size1=`cat /tmp/size2-$$`
+let counter=0
+
+#as long as the temp counter is less than the amount of words from tempfile,
+#display the misspelled version first, then the corrected version.
+while [ $counter -le $size1 ]
+	do
+	echo -n ${tempword[$counter]}
+	let counter=$counter+1
+	echo -n "			"
+	echo ${tempword[$counter]}
+	let counter=$counter+1
+	done
+
+#these commands frees up the memory taken up by the variables mem, tempword, and wordlist.
+unset mem
+unset tempword
+unset wordlist
+
+#This runs the cleanup function, removing those temp files from memory as well.
+cleanup
