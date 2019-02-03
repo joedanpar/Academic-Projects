@@ -1,0 +1,21 @@
+*Assignment 11 by Dan Parker and Mike Pagano
+* :D
+        MACRO
+ENTRYTH ENTRY   &A,&B
+        STM     14,12,12(13)
+        LR      12,15
+        USING   &A,12
+        LA      14,&B
+        ST      13,4(,14)
+        ST      14,8(,13)
+        LR      13,14
+        MEND
+
+
+
+        MACRO
+EXITTH  EXITPLZ
+        L       13,4(13)
+        LM      14,12,12(13)
+        BR      14
+        MEND

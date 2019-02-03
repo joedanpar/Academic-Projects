@@ -1,0 +1,278 @@
+*****************************************
+*Shondra Moon & Joe Parker              *
+*CSCI 360                          Brown*
+*Assignment 6                           *
+*                                       *
+*Function: Read,print, and perform      *
+*   statistics on input numbers stored  *
+*   into a table using internal         *
+*   subroutines.                        *
+*Register usage for MAIN:               *
+*           R1  - STORAGE               *
+*           R2  - TABLE PTR             *
+*           R3  - EOT ADDRESS           *
+*           R4  - TABLE                 *
+*           R10 - BRANCH BACK           *
+*****************************************
+//KC03EF5A JOB ,'Joe Parker',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+MAIN CSECT
+        USING MAIN,R15
+        LA R2,TABLE     *Assign TABLE to R2
+        L R3,EOT        *Assign E3 to EOT
+        LA R1,PLIST1    *Store PLIST1 in R1
+        BAL R10,BUILD   *Put numbers in TABLE
+        LM R2,R3,0(R1)  *Load TABLE and EOT from R1
+        L R4,FIVE      
+        STM R2,R4,0(R1)
+        BAL R10,PRINT   *Print TABLE w/5 per line
+        LM R2,R3,0(R1)  *Reload TABLE and EOT
+        STM R2,R4,0(R1)
+        BAL R10,SORT
+        L R2,0(R1)
+        L R4,THREE
+        STM R2,R4,0(R1)
+        BAL R10,PRINT   *Print TABLE w/3 per line
+        BR 14
+        LTORG
+************Storage for MAIN*************
+R0      EQU 0
+R1      EQU 1
+R2      EQU 2
+R3      EQU 3
+R4      EQU 4
+R5      EQU 5
+R6      EQU 6
+R7      EQU 7
+R8      EQU 8
+R9      EQU 9
+R10     EQU 10
+R11     EQU 11
+R12     EQU 12
+R13     EQU 13
+R14     EQU 14
+R15     EQU 15
+TABLE   DC 50F'-1'
+EOT     DC A(TABLE)
+PLIST1  DC A(TABLE,EOT)
+FIVE    DC F'5'
+THREE   DC F'3'
+***********End of MAIN storage***********
+*
+************BUILD  Subroutine************
+* Registers: R2 - TABLE                 *
+*            R3 - EOT                   *
+*            R4 - INPUT (CARD)          *
+*****************************************
+BUILD   DS 0H
+        STM R2,R15,BSAVE
+        LM R2,R3,0(R1)    *Load TABLE and EOT
+        XREAD CARD,80     *Read in first input line
+DO1     BM END1           *Read one line of input at a time
+        XDECI R4,CARD     *Copy CARD into R4
+DO2     BO END2           *Store numbers in table
+        ST R4,0(R2)
+        LA R2,4(R2)       *Increment table pointer
+        XDECI R4,0(R1)    *Go to next number
+        B DO2
+END2    DS 0H
+        XREAD CARD,80     *Read next line
+        B DO1
+END1    DS 0H
+*
+        LR R3,R2          *Save EOT
+        LA R2,TABLE       *Reset R2 to beginning of TABLE
+        STM R2,R3,0(R1)
+        LM R2,R15,BSAVE
+        BR R10            *End of BUILD subroutine
+        LTORG
+************Storage for BUILD************
+CARD    DS CL80            
+        DC C'*'            
+BSAVE DS 16F               
+**********End of BUILD Storage***********
+*
+**************PRINT Routine**************
+* Used to print all of the contents of a*
+* table with a given number or numbers  *
+* per line.                             *
+* Registers: R2 - TABLE                 *
+*            R3 - EOT                   *
+*            R4 - NUMBERS PER LINE      *
+*            R5 - MAX                   *
+*            R7 - COUNTER               *
+*            R8 - PLINE                 *
+*****************************************
+PRINT   DS 0H
+        STM R0,R15,PSAVE 
+        LM R2,R4,0(R1)     *Load TABLE,EOT,and line count
+        SR R7,R7
+        SR R8,R8
+        XDECO R4,HEADER+12 *Create HEADER
+        XPRNT HEADER,41    *Print HEADER
+        LR R5,R4           *Load to MAX Register
+        XDECI R6,MAX
+        MR R4,R6           *Determine PLINE length
+        LA R8,PLINE        *Load address of PLINE   
+DO3     CR R3,R2           *While there are more
+        BNH END3           * numbers in the TABLE
+        L R4,0(R2)
+        XDECO R4,0(R8)     *Put number in PLINE
+        LA R8,12(R8)       *Increment PLINE
+        LA R7,12(R7)       *Increment COUNTER
+IF1     CR R5,R7           *If PLINE is full
+        BNE END4
+        XPRNT PLINE,80     *Print PLINE
+        LA R8,PLINE        *Reset PLINE
+        MVC 0(80,R8),=CL80' '
+        SR R7,R7           *Reset COUNTER
+        B END4
+END4    DS 0H
+        LA R2,4(R2)        *Increment TABLE ptr
+        B DO3
+END3    DS 0H
+*
+IF2     C R7,ZERO          *Print remaining numbers
+        BE END5
+        XPRNT PLINE,80
+END5    DS 0H
+        LM R0,R15,PSAVE
+        BR R10
+        LTORG
+************Storage for PRINT************
+PSAVE   DS 16F
+HEADER  DC CL41' DATA TABLE:             NUMBERS PER LINE'
+PLINE   DC CL80' '
+MAX     DC CL12' 12'
+ONE     DC F'1'
+ZERO    DC F'0'
+COUNT   DS F'0'
+**********End of PRINT storage***********
+* 
+**************STATS Routine**************
+*                                       *
+* Registers: R2 - TABLE                 *
+*            R3 - EOT                   * 
+*            R5 - SUM                   *
+*            R6 - COUNTER               *
+*            R7 - LOWEST                *
+*            R8 - HIGHEST               *
+*****************************************
+STATS   DS 0H
+        STM R0,R15,STSAVE
+        LM R2,R3,0(R1)
+        SR R5,R5
+        SR R6,R6
+        SR R8,R8
+DO4     CR R3,R2
+        BNH END6
+        L R4,0(R2)
+        LA R6,1(R6)   *Increase COUNTER
+        AR R5,R4      *Add number to SUM
+IF3     CR R4,R7      *Determine LOWEST number
+        BL END7
+        LR R7,R4      *Store LOWEST
+END7    DS 0H
+IF4     CR R4,R8      *Determine HIGHEST number
+        BH END8
+        LR R8,R4      *STORE HIGHEST
+END8    DS 0H
+        LA R2,4(R2)   *Increment TABLE ptr
+        B DO4 
+END6    DS 0H
+** Put all numbers into print line **
+        XDECO R8,HIGH+30
+        XDECO R7,LOW+30
+        XDECO R6,COUNT2+30
+        XDECO R5,SUM+30
+        M R4,ONE2
+        DR R4,R6
+        XDECO R5,AVG+30
+**         **Print info**          **
+        XPRNT COUNT2,50
+        XPRNT SUM,42
+        XPRNT AVG,42
+        XPRNT LOW,42
+        XPRNT HIGH,42
+        LM R0,R15,STSAVE
+        BR R10
+        LTORG
+************Storage for STATS************
+STSAVE  DS 16F
+ZERO2   DC F'0'
+ONE2    DC F'1'
+COUNT2  DC CL50' There are                                 numbers'
+SUM     DC CL42' The sum of the numbers is                '
+AVG     DC CL42' The average of the numbers is            '
+LOW     DC CL42' The lowest number is                     '
+HIGH    DC CL42' The highest number is                    '
+**********End of STATS storage***********
+* 
+**************SORT  Routine**************
+*                                       *
+* Registers: R2/R5 - TABLE (I)          *
+*            R3    - EOT                * 
+*            R4    - FLAG               *
+*            R6    - J                  *
+*            R7    - TEMP (for swap)    *
+*****************************************
+SORT    DS 0H
+        STM R0,R15,SOSAVE
+        LM R2,R3,0(R1)
+        LR R5,R2
+		L R3,0(R3)
+        S R3,=F'4'
+        L R4,=F'1'         *FLAG = 1
+DO5     C R4,=F'0'         *While FLAG!=0
+        BE ENDDO1          *   &&
+        CR R3,R2           *EOT > TABLE
+        BNH ENDDO1
+        LR R5,R2           *I = 1
+        LA R6,4(R5)        *J = 2
+        L R4,=F'0'         *FLAG = 0
+DO6     CR R3,R6           *WHILE J <= EOT
+        BL ENDDO2
+IF5     CR R6,R5           *IF entry(J) > entry(I)
+        BNH ENDIF1
+        XDUMP
+        L R4,=F'1'         *FLAG = 1
+        LR R7,R5           *Swap R5 with R6
+        LR R5,R6
+        LR R6,R7
+		LR R4,R5
+ENDIF1  DS 0H
+        LA R5,1(R5)        *I++
+        LA R6,1(R6)        *J++
+        B DO6
+ENDDO2  DS 0H
+        S R3,=F'1'         *EOT--
+        B DO5
+ENDDO1  DS 0H
+        LR R2,R5
+        ST R2,0(R1)
+        LM R0,R15,SOSAVE
+        BR R10
+        LTORG   
+************Storage for SORT*************
+SOSAVE  DS 16F
+NUM1    DS CL12
+NUM2    DS CL12
+***********End of SORT Storage***********
+        END MAIN
+356 45 2 50
+66 77
+0 39 -45 98
+222 -789
+77
+87 22
+25
+-346 8
+100 543 -4
+88 92 51 57
+1234
+56 -90
+/*
+//

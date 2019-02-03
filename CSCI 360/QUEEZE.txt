@@ -1,0 +1,63 @@
+******************
+* Dan Parker     *
+* CSCI 360       *
+* Take Home Quiz *
+******************
+
+MAIN CSECT
+USING MAIN,15
+         DS 0H
+         LA 2,DATTABLE
+         SR 3,3
+         XREAD CARD,80
+STRTLOOP CLC DOLLAR,CARD
+         BE ENDLOOP
+         PACK 0(17,2),CARD
+         AP 0(8,TOTAL),10(8,CARD)
+         LA 2,18(2)
+         A 3,=F'1'
+         XREAD CARD,80
+         B STRTLOOP
+ENDLOOP  DS 0H
+         SR 4,4
+DO2      CR 3,4
+         BNH ENDDO2
+         MVC PLINE(10),=X'4020202020202120'
+         ED PLINE(10),(8)
+         LA 2,18(2)
+         A 4,=F'1'
+         XPRNT PLINE,60
+         MVC PLINE,=CL60' '
+         B DO2
+ENDDO2   DS 0H
+         PACK 0(,3),AVERAGE
+         DP 0(10,AVERAGE),0(8,TOTAL)
+         UNPK 0(,PLINE),0(,AVERAGE)
+         XPRNT PLINE,60
+         BR 14
+****************
+* DATA STORAGE *
+****************
+CARD     DS CL80
+DATTABLE DC CL80' '
+PRNTLINE DC CL60'*'
+TOTAL    DS PL8' '
+AVERAGE  DS PL10' '
+DOLLAR   DC CL2' $'
+         END MAIN
+*********
+* INPUT *
+*********
+ 0 39368936
+ 1 23984729
+ 2 34890572
+ 3 23485728
+ 4 38902347
+ 5 89578923
+ 6 03852745
+ 7 12894578
+ 8 89578234
+ 9 56890236
+ $
+/*
+// 

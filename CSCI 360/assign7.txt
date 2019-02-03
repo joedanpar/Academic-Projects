@@ -1,0 +1,387 @@
+*****************************************
+* Shondra Moon & Joe Parker             *
+* CSCI 360                       Brown  *
+* Assignment 6                          *
+*                                       *
+* Function: Read in elements for 2      *
+*  tables, print, sort, and reprint     *
+*  both, merge them into 1 table and    *
+*  print the merged table.              *
+*                                       *
+* Register usage for MAIN:              *
+*           R1  - STORAGE               *
+*           R2  - TABLE1                *
+*           R3  - COUNT1                *
+*           R4  - TABLE2                *
+*           R5  - COUNT2                *
+*           R6  - MTABLE                *
+*           R7  - MCOUNT                *
+*           R10 - BRANCH BACK           *
+*****************************************
+//KC03EF5A JOB ,'Joe Parker',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+MAIN CSECT
+        USING MAIN,R15
+        LA R2,TABLE1
+        LA R3,COUNT1
+        LA R4,TABLE2
+        LA R5,COUNT2
+        LA R6,MTABLE
+*
+        LA R1,PLIST1     *CREATE TABLE1
+        BAL R10,BUILD
+        L R3,0(R1)
+*
+        XPRNT HEADER1,19
+        STM R2,R3,0(R1)  *PRINT TABLE1
+        BAL R10,PRINT
+* 
+        LA R1,PLIST2     *CREATE TABLE2
+        BAL R10,BUILD
+        L R5,0(R1)
+*
+        XPRNT HEADER2,19 *PRINT TABLE2
+        STM R4,R5,0(R1)
+        BAL R10,PRINT
+*
+        XPRNT HEADER3,17 *SORT AND REPRINT
+        STM R2,R3,0(R1)  *TABLE1
+        BAL R10,SORT
+        STM R2,R3,0(R1)
+        BAL R10,PRINT
+*
+        XPRNT HEADER4,17 *SORT AND REPRINT
+        STM R4,R5,0(R1)  *TABLE1
+        BAL R10,SORT
+        STM R4,R5,0(R1)
+        BAL R10,PRINT
+*
+        XPRNT HEADER5,24 *MERGE AND PRINT
+        STM R2,R6,0(R1)  *MTABLE
+        BAL R10,MERGE
+        L R7,0(R1)
+        STM R6,R7,0(R1)
+        BAL R10,PRINT
+*
+        BR 14
+        LTORG
+************Storage for MAIN*************
+R0      EQU 0
+R1      EQU 1
+R2      EQU 2
+R3      EQU 3
+R4      EQU 4
+R5      EQU 5
+R6      EQU 6
+R7      EQU 7
+R8      EQU 8
+R9      EQU 9
+R10     EQU 10
+R11     EQU 11
+R12     EQU 12
+R13     EQU 13
+R14     EQU 14
+R15     EQU 15
+TABLE1  DC 20CL20'TABLE ONE ENTRY'
+TABLE2  DC 20CL20'TABLE TWO ENTRY'
+MTABLE  DC 40CL20'MERGE TABLE ENTRY'
+COUNT1  DC F'0'
+COUNT2  DC F'0'
+PLIST1  DC A(TABLE1,COUNT1)
+PLIST2  DC A(TABLE2,COUNT2)
+HEADER1 DC CL19' TABLE 1 - UNSORTED'
+HEADER2 DC CL19'0TABLE 2 - UNSORTED'
+HEADER3 DC CL17'0TABLE 1 - SORTED'
+HEADER4 DC CL17'0TABLE 2 - SORTED'
+HEADER5 DC CL24'0TABLES 1 AND 2 - MERGED'
+***********End of MAIN storage***********
+*
+************BUILD  Subroutine************
+* Description: Read input numbers from  *
+*          CARD and store them into     *
+*          TABLE.  Save EOT when done.  *
+*                                       *
+* Registers: R2 - TABLE                 *
+*            R3 - COUNT                 *
+*            R4 - INPUT (CARD)          *
+*****************************************
+BUILD   DS 0H
+        STM R2,R15,BSAVE
+        LM R2,R3,0(R1)
+        SR R3,R3
+*
+        XREAD CARD,20
+DO1     CLC DONE,CARD     *COMPARE TO $
+        BE END1
+        MVC 0(20,R2),CARD *STORE IN TABLE
+        LA R2,20(R2)      *INCREMENT TABLE PTR
+        A R3,=F'1'        *INCREMENT COUNTER
+        XREAD CARD,20     *READ NEXT
+        B DO1
+END1    DS 0H
+*        
+        ST R3,0(R1)    
+        LM R2,R15,BSAVE
+        BR R10            *End of BUILD subroutine
+        LTORG
+************Storage for BUILD************
+CARD    DS CL80            
+        DC C'*'           
+BSAVE   DS 16F
+DONE    DC CL2' $'
+**********End of BUILD Storage***********
+*
+************PRINT  Subroutine************
+* Description: Used to print all of the *
+*           contents of a table with 2  *
+*           elements per line.          *
+*                                       *
+* Registers: R2 - TABLE                 *
+*            R3 - TABLE COUNT           *
+*            R4 - COUNTER               *
+*****************************************
+PRINT   DS 0H
+        STM R2,R15,PSAVE
+        LM R2,R3,0(R1)
+        SR R4,R4
+DO2     CR R3,R4               *WHILE NOT EOT
+        BNH END2
+        MVC PLINE(20),0(R2)    *MOVE FIRST TO PLINE
+        LA R2,20(R2)           *INCREMENT TABLE PTR
+        A R4,=F'1'             *INCREMENT COUNTER
+IF1     CR R3,R4               *IF NOT EOT
+        BNH ENDIF1
+        MVC PLINE+20(20),0(R2) *MOVE SECOND TO PLINE
+        LA R2,20(R2)           *INCREMENT TABLE PTR
+        A R4,=F'1'             *INCREMENT COUNTER
+ENDIF1  DS 0H
+        XPRNT PLINE,40         *PRINT PLINE
+        MVC PLINE,=CL20' '     *CLEAR PLINE
+        B DO2
+END2    DS 0H
+*
+        LM R2,R15,PSAVE
+        BR R10                 *END OF PRINT
+        LTORG
+***********Storage for PRINT*************
+PSAVE   DS 16F
+PLINE   DC CL50'*'
+**********End of PRINT Storage***********
+*
+**************SORT  Routine**************
+* Description: Sort TABLE in ascending  *
+*              order using the bubble   *
+*              sort method              *
+*********BUBBLE SORT PSEUDOCODE**********
+*flag = 1                               *
+*dowhile flag=1 and end > 1             *
+*   i = 1                               *
+*   j = 2                               *
+*   flag = 0                            *
+*   dowhile j <= end                    *
+*      if entry(i) > entry(j)           *
+*         flag = 1                      *
+*         swap table(i) with table(j)   *
+*      endif                            *
+*      i = i + 1                        *
+*      j = j + 1                        *
+*   enddo                               *
+*   end = end - 1                       *
+*enddo                                  *
+*****************************************
+* Registers: R0    - T                  *                  
+*            R2    - KEY(J)             *
+*            R3    - TEMP1              * 
+*            R4    - KEY(K)             *
+*            R5    - TEMP2              *
+*            R6    - J                  *
+*            R7    - K                  *
+*            R8    - TABLE              *
+*            R9    - COUNT              *
+*****************************************
+SORT    DS 0H
+        STM R0,R15,SOSAVE
+        SR    R0,R0
+        LM    R8,R9,0(R1)    *Load
+        XDECI R9,COUNT3 
+        AR    R0,R9
+        ST R0,BOUND          *Set BOUND = COUNT
+        L R0,=F'1'           *Set T=1
+        ST R0,T
+WHILE1  SR R0,R0
+        C R0,T               *If T != 0
+        BE WHILEND1
+        ST R0,T
+        L R6,=F'1'           *Set J=1
+FOR1    C R6,BOUND           *If J<BOUND
+        BNL FOR1END
+        L R7,=F'1'           *Set K=1
+        AR R7,R6             *K+=J
+        LR R3,R6             *R3=J
+        S R3,=F'1'           *TEMP--
+        M R2,=F'20' 
+        AR R3,R8             *Get address of KEY(J)
+        LR R5,R7             *R5=K=J+1
+        S R5,=F'1'           *TEMP2--
+        M R4,=F'20'
+        AR R5,R8             *Get address of KEY(K)
+        L R2,0(,R3)          *Get KEY(J)
+        L R4,0(,R5)          *Get KEY(K)
+        CR R2,R4             *If KEY(J)>KEY(K)
+        BNH IF1END
+        MVC STEMP(20),0(R5)
+        MVC 0(20,R5),0(R3)
+        MVC 0(20,R3),STEMP
+*        ST R4,0(,R3)
+*        ST R2,0(,R5)
+        ST R6,T              *T=J
+IF1END  DS 0H
+        A R6,=F'1'           *J++
+        B FOR1
+FOR1END DS 0H
+        L R0,T               *BOUND=T
+        ST R0,BOUND
+        B WHILE1
+WHILEND1 DS 0H
+        LM R0,R15,SOSAVE
+        BR R10               *END OF SORT
+        LTORG   
+************Storage for SORT*************
+SOSAVE  DS 16F
+COUNT3  DS CL12
+BOUND   DS F
+T       DS F
+STEMP   DS CL20
+***********End of SORT Storage***********
+*
+************MERGE  Subroutine************
+* Description: Used to take the contents*
+*       of 2 sorted tables and merge    *
+*       them in to one table, not       *
+*       including duplicates, returning *
+*       the number of elements in the   *
+*       merged table.                   *
+*                                       *
+* Registers: R2 - TABLE1                *
+*            R3 - COUNT1                *
+*            R4 - TABLE2                *
+*            R5 - COUNT2                *
+*            R6 - MTABLE                *
+*            R7 - COMPARECOUNT1         *
+*            R8 - COMPARECOUNT2         *
+*            R9 - MTABLE COUNT          *
+*****************************************
+MERGE   DS 0H
+        STM R2,R15,MSAVE
+        LM R2,R6,0(R1)
+        SR R7,R7          *CC1 = 0
+        SR R8,R8          *CC2 = 0
+        SR R9,R9
+****
+MDO1    CR R3,R7           *WHILE NOT EOT1
+        BNH MENDDO1
+MDO2    CR R5,R8           *WHILE NOT EOT2
+        BNH MENDDO1
+**
+        MVC TAB1(20),0(R2) *COPY ELEMENT FROM T1
+        MVC TAB2(20),0(R4) *COPY ELEMENT FROM T2
+MIF1    CLC TAB1,TAB2
+        BL IF2
+        BH IF3
+        BE IF4
+*
+IF2     DS 0H              *    IF TAB1<TAB2
+        MVC 0(20,R6),TAB1  *STORE TAB1 IN MTABLE
+        LA R2,20(R2)       *INCREMENT TABLE1 PTR
+        A R7,=F'1'         *INCREMENT CC1
+        B MENDIF1
+*
+IF3     DS 0H              *    IF TAB1>TAB2
+        MVC 0(20,R6),TAB2  *STORE TAB2 IN MTABLE
+        LA R4,20(R4)       *INCREMENT TABLE2 PTR
+        A R8,=F'1'         *INCREMENT CC1
+        B MENDIF1
+*
+IF4     DS 0H              *    IF TAB1==TAB2
+        MVC 0(20,R6),TAB1  *STORE TAB1 IN MTABLE
+        LA R2,20(R2)       *INCREMENT TABLE1 PTR
+        LA R4,20(R4)       *INCREMENT TABLE2 PTR
+        A R7,=F'1'         *INCREMENT CC1
+        A R8,=F'1'         *INCREMENT CC2
+        B MENDIF1
+*
+MENDIF1 DS 0H
+**
+        LA R6,20(R6)       *INCREMENT MTABLE PTR
+        A R9,=F'1'         *INCREMENT MTABLE COUNTER
+        B MDO1
+MENDDO1 DS 0H
+****
+MDO3    CR R3,R7           *WHILE TABLE1 NOT DONE
+        BNL MENDDO2
+        MVC 0(20,R6),0(R2) *STORE TAB1 IN MTABLE
+        LA R2,20(R2)       *INCREMENT TABLE1 PTR
+        A R7,=F'1'         *INCREMENT CC1
+        LA R6,20(R6)       *INCREMENT MTBALE PTR
+        A R9,=F'1'         *INCREMENT MTABLE COUNTER
+        B MDO3
+MENDDO2 DS 0H
+****
+MDO4    CR R5,R8           *WHILE TABLE2 NOT DONE
+        BNL MENDDO3
+        MVC 0(20,R6),0(R4) *STORE TAB2 IN MTABLE
+        LA R4,20(R4)       *INCREMENT TABLE2 PTR
+        A R8,=F'1'         *INCREMENT CC2
+        LA R6,20(R6)       *INCREMENT TABLE2 PTR
+        A R9,=F'1'         *INCREMENT MTABLE COUNTER
+        B MDO4
+MENDDO3 DS 0H
+****
+        ST R9,0(R1)
+        LM R2,R15,MSAVE
+        BR R10             *END OF MERGE
+        LTORG
+***********Storage for MERGE*************
+TAB1    DC CL20' '
+TAB2    DC CL20' '
+MSAVE   DS 16F
+**********End of MERGE Storage***********
+*
+        END MAIN
+ LINUS,BEN
+ FARADAY,DANIEL
+ KWON,JIN-SOO
+ LOCKE,JOHN
+ QUINN,DANNY
+ MAITLAND,ABBY
+ TEMPLE,CONNOR
+ BURKE,JULIET
+ AUSTEN,KATE
+ REYES,HUGO
+ SHEPARD,JACK
+ HUME,DESMOND
+ JARRAH,SAYID
+ KWON,SUN-HWA
+ FORD,JAMES
+ STRAUME,MILES
+ $
+ CUTTER,NICK
+ QUINN,DANNY
+ MAITLAND,ABBY
+ TEMPLE,CONNOR
+ LEWIS,JENNY
+ CUTTER,HELEN
+ ONEILL,JACK
+ MITCHELL,CAMERON
+ JACKSON,DANIEL
+ CARTER,SAMANTHA
+ SHEPARD,JACK
+ HUME,DESMOND
+ JARRAH,SAYID
+ KWON,SUN-HWA
+ $
+/*
+//

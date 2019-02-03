@@ -1,0 +1,43 @@
+******************************************
+*Shondra Moon & Joe Parker               *
+*CSCI 360                        Brown   *
+*                                        *
+*Function: Perform arithmetic operations.*
+*Register usage: R2 - Store NUM1         *
+*                R3 - Store NUM2         *
+*                R4 - Store NUM1         *
+*                R5 - Store NUM2-NUM1    *
+******************************************
+//KC03EF5A JOB ,'DAN PARKER',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+MAIN CSECT
+        USING MAIN,15
+*       LOAD NUM1 INTO R2
+        L 2,48(,15)
+*       LOAD NUM2 INTO R3
+        L 3,52(,15)
+        XDUMP
+*       SUBTRACT NUM1 FROM NUM2
+        SR 3,2
+        XDUMP
+*       LOAD R2 INTO R4
+        LR 4,2
+*       LOAD R3 INTO R5
+        LR 5,3
+*       ADD R4 TO R5
+        AR 5,4
+        XDUMP
+*       STORE R5 INTO ANS
+        ST 5,56(,15)
+        XDUMP ANS,8
+*       END
+        BR 14
+        DC F'32'
+        DC F'171'
+ANS     DC F'0'
+        END MAIN
+/*
+//

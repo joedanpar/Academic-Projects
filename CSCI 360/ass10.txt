@@ -1,0 +1,221 @@
+//KC03EF5A JOB ,'Dan Parker',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+*********************************************
+* ASSIGNMENT 10                             *
+* COMPLETED BY: DAN PARKER AND              *
+* MIKE PAGANO                               *
+* REGISTER USAGE:                           *
+* R2-                                       *
+* FREE EXTENSION                            *
+*********************************************
+MAIN    CSECT
+        STM     14,12,12(13)
+        LR      12,15
+        USING   MAIN,12
+        LA      14,MAINSAV
+        ST      13,4(,14)
+        ST      14,8(,13)
+        LR      13,14
+        LA      2,HASHTAB //load hash table and EOT
+        L       3,EOT
+        SR      5,5 //initialize counter
+        LA      4,31
+LOOP    MVC     20(4,2),5 //initialize hash keys
+        A       5,=F'1'
+        LA      2,32(2)
+        BCT     4,LOOP //end of hash key initialization
+        LA      2,HASHTAB //reset table pointer
+        LA      1,PARALST //load parameter list
+        L       15,=V(BUILD) //set routine address
+        LA      14,ABUILD //set return address
+        BALR    14,15 //branch to build routine
+ABUILD  DS      0H
+        LA      1,PARALST //load parameter list
+        L       15,=V(PROCESS) //set routine address
+        LA      14,APROCS //set return address
+        BALR    14,15 //branch to process routine
+APROCS  DS      0H
+        L       13,4(13)
+        LM      14,12,12(13)
+        BR      14
+        LTORG
+*               
+*MAIN STORAGE   
+MAINSAV DS      18F
+        ORG     (MAIN+((*-MAIN+31)/32*32))
+        DC      CL32' THIS IS THE START OF THE TABLE '
+HASHTAB DC      32XL32'0'
+EOT     DC      CL32' THIS IS THE END OF THE TABLE '
+PARALST DC      A(HASHTAB,EOT)
+*
+*
+BUILD   CSECT
+        STM     14,12,12(13)
+        LR      12,15
+        USING   BUILD,12
+        LA      14,BILDSAV
+        ST      13,4(14)
+        ST      14,8(13)
+        LR      13,14
+        LM      2,3,0(1)
+        LR      5,2 //copy start of table for later
+        XREAD   CARD+1,80 //read first entry from file
+DOWHILE CLC     DOLLAR,CARD+1 //check if input is empty
+        BE      ENDDO1 //leave loop if it is empty
+        MVC     0(20,1),CARD+1 //move contents of card into register 1
+        L       15,=V(HASH) //set routine address
+        LA      14,AHASH //sets return address
+        BALR    14,15 //branch to hash function
+AHASH   DS      0H
+        LM      6,7,0(1)
+        LR      7,6
+        LR      8,6
+IF1     C       6,=F'0' //check if key is == 0
+        BE      ENDIF1 //branch if it is
+SEARCH  LA      2,32(2) //increment table pointer
+        BCT     6,SEARCH //branch back until 
+ENDIF1  DS      0H
+        M       6,=F'32' //multiple key by length for displacement
+IF2     CLC     BLANK(21),0(2) //check if table pointer is blank
+        BNM     ENDIF2 //branch if it is blank
+        LA      2,32(2) //increment pointer
+        B       IF2
+ENDIF2  DS      0H
+        MVC     0(20,2),CARD //move input to table
+        MVC     28(4,2),8
+        SR      9,9 //initialize register
+        PACK    0(8,9),CARD+21(3) //convert 1st part of IP address
+        CVB     9,0(9)
+        STC     9,24(2)
+        SR      9,9 //clear register
+        PACK    0(8,9),CARD+24(3) //convert 2nd part of IP address
+        CVB     9,0(9)
+        STC     9,25(2)
+        SR      9,9 //clear register
+        PACK    0(8,9),CARD+27(3) //convert 3rd part of IP address
+        CVB     9,0(9)
+        STC     9,26(2)
+        SR      9,9 //clear register
+        PACK    0(8,9),CARD+30(3) //convert 4th part of IP address
+        CVB     9,0(9)
+        STC     9,27(2)
+        LR      2,5 //reset table pointer
+        XREAD   CARD+1,80 //read next line of input from file
+        B       DOWHILE1 //return to top of loop
+ENDDO1  DS      0H
+        SR      9,9 //clear out register
+        LR      2,5 //reset table pointer
+        XPRNT   HEADUNO,41 //print out header information
+        XPRNT   HEADDOS,46
+        XPRNT   HEADTRE,52
+        XPRNT   HEADFOR,53
+DO2     CR      3,2 //compare table and end of table
+        BL      END2 //branch if end of table < table
+        MVC     PLINE(20),0(2) //move contents onto print line
+IF3     CLC     0(21,2),BLANK //check if print line is blank
+        BNH     ENDIF3 //branch if it is blank
+        LA      9,1(9) //increment pointer
+        SR      10,10 //initialize register
+        IC      10,27(2) //insert 4th hex character of IP address
+        CVD     10,TEMP //convert 4th part of IP address
+        MVC     PLINE+47(6),=X'402020202120' //set up print line
+        ED      PLINE+47(6),TEMP+5
+        MVC     PLINE+49(1),=C'.'
+        SR      10,10 //clear register
+        IC      10,26(2) //insert 3rd hex character of IP address
+        CVD     10,TEMP //convert 3rd part of IP address
+        MVC     PLINE+43(6),=X'402020202120' //set up print line
+        ED      PLINE+43(6),TEMP+5
+        MVC     PLINE+45(1),=C'.'
+        SR      10,10 //clear register
+        IC      10,25(2) //insert 2nd hex character of IP address
+        CVD     10,TEMP //convert 2nd part of IP address
+        MVC     PLINE+39(6),=X'402020202120' //set up print line
+        ED      PLINE+39(6),TEMP+5
+        MVC     PLINE+41(1),=C'.'
+        SR      10,10 //clear register
+        IC      10,24(2) //insert 1st hex character of IP address
+        CVD     10,TEMP //convert 1st part of IP address
+        MVC     PLINE+35(6),=X'402020202120' //set up print line
+        ED      PLINE+35(6),TEMP+5
+        XPRNT   PLINE,60
+        MVC     PLINE,=CL60' ' //clear print line
+ENDIF3  DS      0H
+        LA      2,32(2) //increment table pointer
+        B       DO2 //branch to top of loop
+END2    DS      0H
+        XDECO   9,TTLDISP+33 //store count
+        XPRNT   TTLDISP,53 //display count
+        LR      2,5 //reset table pointer
+        STM     2,3,0(1) //store table and end of table
+        L       13,4(13)
+        LM      14,12,12(13)
+        BR      14
+        LTORG
+*
+*BUILD STORAGE
+CARD    DS      CL80
+        DC      C'*'
+BILDSAV DS      18F
+DOLLAR  DC      CL1'$'
+HEADUNO DC      CL41'                      DOMAIN NAME SERVICE'
+HEADDOS DC      CL46'                    HOST LOOKUP TABLE CONTENTS'
+HEADTRE DC      CL52' FULLY QUALIFIED DOMAIN NAME              IP ADDRESS'
+HEADFOR DC      CL53' ----------------------------------------------------'
+PLINE   DC      CL60' '
+BLANK   DC      CL21'                     '
+TTLDISP DC      CL53' TOTAL NUMBER OF HOSTS IN TABLE:                     '
+TEMP    DS      D
+*
+*
+PROCESS CSECT
+        STM 14,12,12(13)
+        LR 12,15
+        USING PROCESS,12
+        LA 14,PSAVE
+        ST 13,4(,14)
+        ST 14,8(,13)
+        LR 13,14
+*        
+        L 13,4(13)
+        LM 14,12,12(13)
+        BR 14
+        LTORG
+*
+* PROCESS STORAGE
+PSAVE   DS      18F
+*
+*
+HASH    CSECT
+        STM     14,12,12(13)
+        LR      12,15
+        USING   HASH,12
+        LA      14,HASHSAV
+        ST      13,4(14)
+        ST      14,8(13)
+        LR      13,14
+        LA      2,0(1)
+        SR      0,0 INITIALIZE HASH REG
+        SR      4,4 INITIALIZE HOLDING REG
+        LA      3,20 NUMBER OF TIMES THRU LOOP
+LOOPFOO IC      4,0(,2) GET the NEXT BYTE FROM THE FQDN
+        AR      0,4 ADD THE EBCDIC VALUE TO SUM
+        LA      2,1(2) INCREMENT FQDN POINTER
+        BCT     3,LOOPFOO BOTTOM DRIVEN LOOP
+        SLL     0,27 CALCULATE THE SUM MOD 32 BY
+        SRL     0,27 SHIFTING OFF LEFT MOST BITS ANDSET TO 0
+        STM     0,1,0(1)
+        L       13,4(13)
+        LM      14,12,12(13)
+        BR      14
+        LTORG
+* HASH STORAGE
+HASHSAV DS      18F
+*
+        END     MAIN
+/*
+//FT05F001 DD DSN=KC02298.CSCI360.DATALIB(DATA10),DISP=SHR
+//

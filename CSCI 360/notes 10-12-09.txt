@@ -1,0 +1,17 @@
+         LM  R2,R3,0(R1)
+         L   R3,0(R3)
+		 S   R3,=F'4'
+		 LA  R4,1
+		 CR  4,=F'1'
+		 BNE ENDDO1
+		 CR  R2,R3
+		 BNH ENDDO1
+		 LR  R2,R5
+		 LA  R6,4(R5)
+		 SR  R4,R4
+		 
+PLIST    DC  A(TAB,EOT)
+PLIST3   DC  A(TAB,EOT,FOUR)
+FOUR     DC  F'4'
+TABLE    DC
+EOT

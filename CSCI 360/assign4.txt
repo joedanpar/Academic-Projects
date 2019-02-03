@@ -1,0 +1,125 @@
+******************************************
+*Shondra Moon & Joe Parker               *
+*CSCI 360                          Brown *
+*Assignment 4                            *
+*                                        *
+*Function: To read an unknown number of  *
+*          numbers into a table and find *
+*          their count and average       *
+*Register usage: R2 - TABLE PTR          *
+*                R3 - EOT                *
+*                R4 - TABLE              *
+*                R5 - SUM                *
+*                R6 - NUMBER TOTAL       *
+*                R7 - NUMBER COUNTER     *
+******************************************
+//KC03EF5A JOB ,'JOE PARKER',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+MAIN CSECT
+        USING MAIN,R15
+        SR R1,R1          *Clear registers that are to be used
+        SR R2,R2
+        SR R3,R3
+        SR R4,R4
+        SR R5,R5
+        SR R6,R6
+        SR R7,R7
+        LA R2,TABLE       *Assign TABLE to R2
+        L R3,EOT          *Assign EOT to R3
+        XREAD CARD,80     *Read in first input line
+DO1     BM END1           *Read one line of input at a time
+        XDECI R4,CARD     *Copy CARD into R4
+DO2     BO END2           *Store numbers in table
+        LA R6,1(R6)       *Increase counter
+        AR R5,R4
+        ST R4,0(R2)
+        LA R2,4(R2)       *Increment table pointer
+        XDECI R4,0(R1)    *Go to next number
+        B DO2
+END2    DS 0H
+        XREAD CARD,80     *Read next line
+        B DO1
+END1    DS 0H 
+**********************************************************
+        XPRNT HEADER,32   *Print header
+        LA R2,TABLE       *Set pointer back to beginning of table
+        LA R7,1(R7)
+DO3     CR R7,R6          *Branch when #s printed < #s in table
+        BH END3
+        L R4,0(R2)        *Get first number for line
+        XDECO R4,PLINE    *Put in PLINE
+        LA R2,4(R2)       *Increment table pointer
+*        
+        L R4,0(R2)        *Get second number for line
+        XDECO R4,PLINE+13
+        LA R2,4(R2)
+*
+        L R4,0(R2)        *Get third number for line
+        XDECO R4,PLINE+25
+        LA R2,4(R2)
+*
+        L R4,0(R2)        *Get fourth number for line
+        XDECO R4,PLINE+37
+        LA R2,4(R2)
+*
+        L R4,0(R2)        *Get fifth number for line
+        XDECO R4,PLINE+49
+        LA R2,4(R2)
+*
+        XPRNT PLINE,61    *Print one line with 5 numbers
+        LA R7,5(R7)       *Increment number counter
+        B DO3
+END3    DS 0H
+        XDECO R6,COUNT+15 
+        XPRNT COUNT,35    *Print the number count
+        XDECO R5,SUM+15   
+        XPRNT SUM,27      *Print the sum of the numbers
+        M R4,ONE
+        DR R4,R6          *Calculate average
+        XDECO R5,AVG+15
+        XPRNT AVG,27      *Print the average of the numbers
+******************************************************
+        BR 14
+R0      EQU 0
+R1      EQU 1
+R2      EQU 2
+R3      EQU 3
+R4      EQU 4
+R5      EQU 5
+R6      EQU 6
+R7      EQU 7
+R8      EQU 8
+R9      EQU 9
+R10     EQU 10
+R11     EQU 11
+R12     EQU 12
+R13     EQU 13
+R14     EQU 14
+R15     EQU 15
+TABLE   DC 50F'0'
+EOT     DC A(TABLE)
+CARD    DS CL80
+        DC C'*'
+ONE     DC F'1'
+HEADER  DC CL32' DATA TABLE: 5 NUMBERS PER LINE '
+PLINE   DC CL61' '
+COUNT   DC CL35' THERE ARE                  NUMBERS'
+SUM     DC CL27' THE SUM IS                '
+AVG     DC CL27' THE AVERAGE IS            '
+        END MAIN
+356 45   2                    50
+66                77  29
+0                 -45               98
+222            -789
+77
+87
+25
+-346      8
+100                543           -4
+88                92 51            57
+1234   43
+/*
+//

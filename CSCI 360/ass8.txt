@@ -1,0 +1,342 @@
+//KC03EF5A JOB ,'Dan Parker',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+*********************************************
+* ASSIGNMENT 8                              *
+* COMPLETED BY: DAN PARKER AND              *
+* MIKE PAGANO                               *
+* REGISTER USAGE:                           *
+* R2-TABLE1                                 *
+* R3-TABLE 1 COUNTER                        *
+* R4-TABLE2                                 *
+* R5-TABLE 2 COUNTER                        *
+* R6-MERGE TABLE                            *
+*********************************************
+MAIN    CSECT
+        USING   MAIN,15
+        STM     0,15,MAINSAV
+        LA      2,TABLE1     LOADS TABLE 1 INTO R2
+        LA      3,COUNT1     LOADS COUNT1 INTO R3
+        LA      4,TABLE2     LOADS TABLE 2 INTO R4
+        LA      5,COUNT2     LOADS COUNT 2 INTO R5
+        LA      6,TABLE3     LOADS MERGE TABLE INTO R6
+        LA      1,PLIST1     LOADS ADDRESS OF TABLE1 TO R1
+        BAL     10,READ      BUILDS TABLE 1
+        L       3,0(1)     
+        XPRNT HEADER1,18     
+        STM     2,3,0(1)  
+        BAL     10,PRINT     PRINTS TABLE 1
+        LA      1,PLIST2     LOADS ADDRESS OF TABLE2 TO R1
+        BAL     10,READ      BUILDS TABLE 2
+        L       5,0(1)
+        XPRNT HEADER2,18
+        STM     4,5,0(1)
+        BAL     10,PRINT     PRINTS TABLE 2
+        XPRNT HEADER3,25
+        STM     2,3,0(1)
+        BAL     10,BUBBLE    SORTS TABLE 1
+        STM     2,3,0(1)
+        BAL     10,PRINT     PRINTS SORTED TABLE
+        XPRNT HEADER4,25
+        STM     4,5,0(1)
+        BAL     10,BUBBLE    SORTS TABLE 2
+        STM     4,5,0(1)
+        BAL     10,PRINT     PRINTS SORTED TABLE
+        XPRNT HEADER5,24
+        STM     2,6,0(1)
+        BAL     10,MERGE     MERGES TABLES
+        L       7,0(1)
+        STM     6,7,0(1)
+        BAL     10,PRINT     PRINTS MERGED TABLES
+        BR      14
+        LTORG
+*
+* MAIN STORAGE
+TABLE1  DC      20CL29'ENTRY ONE'
+TABLE2  DC      20CL29'ENTRY TWO'
+TABLE3  DC      20CL29'ENTRY TREE'
+COUNT1  DC      F'0'
+COUNT2  DC      F'0'
+PLIST1  DC      A(TABLE1,COUNT1)
+PLIST2  DC      A(TABLE2,COUNT2)
+HEADER1 DC CL18' *****TABLE 1*****'
+HEADER2 DC CL18' *****TABLE 2*****'
+HEADER3 DC CL25' *****SORTED TABLE 1*****'
+HEADER4 DC CL25' *****SORTED TABLE 2*****'
+HEADER5 DC CL24' *****MERGED TABLES*****'
+*
+*
+*********************************************
+* READ SUBROUTINE                           *
+*                                           *
+* DESCRIPTION:                              *
+* BUILDS THE 2 TABLES OF NAMES              *
+*********************************************
+*
+*
+READ    DS      0H
+        STM     2,15,READSAV
+        LM      2,3,0(1)
+        SR      3,3         ZEROES OUT R3
+        XREAD   CARD,80     READS IN FIRST NAME
+READLOP CLC     DOLLR,CARD  LOOKS FOR $ FOR EOT
+        BE      SETLAST
+        MVC     0(21,2),CARD   MOVES 20 CHAR TO R2
+        PACK    21(2,2),CARD+21(2)
+        PACK    23(6,2),CARD+23(6)
+        LA      2,30(2)
+        A       3,=F'1'
+        XREAD   CARD,80     READS IN NEXT NAME
+        B       READLOP
+SETLAST DS      0H
+        ST      3,0(1)
+        LM      2,15,READSAV
+        BR      10
+        LTORG
+*
+* READ STORAGE
+CARD    DS      0C
+NAME    DS      CL20
+NUM     DS      CL2
+PAID    DS      CL7
+THEREST DS      CL51
+READSAV DS      16F
+DOLLR   DC      CL2' $'
+*
+*
+*********************************************
+* PRINT SUBROUTINE                          *
+*                                           *
+* DESCRIPTION:                              *
+* PRINTS THE 2 TABLES OF NAMES              *
+*********************************************
+*
+PRINT    DS 0H 
+         STM 2,15,PSAVE 
+         LM 2,3,0(1) 
+         SR 4,4 
+*        XPRNT HEADER,35 
+DO2      CR 3,4                     *WHILE NOT EOT 
+         BNH END2 
+         MVC PLINE(21),0(2)          *MOVE NAME TO PLINE 
+* 
+         MVC PLINE+21(4),=X'40202020' *Move QUANTITY 
+         ED PLINE+21(4),21(2) 
+* 
+         MVC PLINE+28(9),=X'4020202021204B2020' 
+         ED PLINE+28(9),25(2)        *MOVE PRICE 
+         MVC PLINE+27(2),=CL2' $'     *MOVE $ 
+* 
+         LA 2,30(2)                 *INCREMENT TABLE PTR 
+         A 4,=F'1'                   *INCREMENT COUNTER 
+         XPRNT PLINE,38               *PRINT PLINE 
+         MVC PLINE,=CL38' '           *CLEAR PLINE 
+         B DO2 
+END2     DS 0H 
+* 
+         LM 2,15,PSAVE 
+         BR 10                       *END OF PRINT 
+         LTORG
+*PRINT   DS      0H
+*        STM     2,15,PRNTSAV
+*        LM      2,3,0(1)
+*        SR      4,4
+*DO2     CR      3,4
+*        BNH     END2
+*        MVC     PLINE(21),0(2)
+*        MVC     PLINE+21(4),=X'40202020'
+*        ED      PLINE+21(4),21(2)
+*        MVC     PLINE+28(9),=X'4020202021204B2020'
+*        ED      PLINE+28(9),21(2)
+*        MVC     PLINE+27(2),=CL2' $'
+*        LA      2,30(2)
+*        A       4,=F'1'
+*        XPRNT   PLINE,38
+*        MVC     PLINE,=CL38' '
+*        B       DO2
+*END2    DS      0H
+*        LM      2,15,PRNTSAV
+*        BR      10
+*        LTORG
+*
+* PRINT STORAGE
+PLINE   DC CL60'*'
+PSAVE   DS 16F
+*
+*
+*********************************************
+* BUBBLE SUBROUTINE                         *
+*                                           *
+* DESCRIPTION:                              *
+* TAKES THE TABLES AND SORTS THEM WITH      *
+* BUBBLE SORT                               *
+*********************************************
+*
+*
+BUBBLE  DS    0H
+        STM   0,15,BUBLSAV     SAVES REGISTERS
+        SR    0,0
+        LM    8,9,0(1)         GET ADDRESS OF TABLE
+        XDECI 9,COUNT
+        AR    0,9              SETS COUNT
+        ST    0,BOUND          STORES THE BOUND
+        L     0,=F'1'          LOADS 1 INTO REGISTER 0
+        ST    0,T
+DO1     SR    0,0
+        C     0,T              CHECKS IF T = 0
+        BE    DO1END
+        ST    0,T              T = 0
+        L     6,=F'1'          LOADS 1 INTO REG 6
+FOR1    C     6,BOUND          COMPARES 6 WITH BOUND
+        BNL   FOR1END
+        L     7,=F'1'          LOADS 1 INTO REG 7
+        AR    7,6              R7 = J + 1 = K
+        LR    3,6              R3 = J
+        S     3,=F'1'          SUBTRACT 1
+        M     2,=F'30'          TIMES THE SIZE OF THE TABLE ENTRY
+        AR    3,8              GET THE ADDRESS OF KEY J
+        LR    5,7              R5 = K = J + 1
+        S     5,=F'1'          CONVERT TO ZERO BASED
+        M     4,=F'30'          
+        AR    5,8              GET ADDRESS OF KEY K
+        CLC   0(21,3),0(5)
+        BNH   IF1END
+        MVC   STRTMP(30),0(5)
+        MVC   0(30,5),0(3)
+        MVC   0(30,3),STRTMP
+        ST    6,T  
+IF1END  DS    0H
+        A     6,=F'1'          J = J + 1
+        B     FOR1             BACK TO THE TOP
+FOR1END DS    0H
+        L     0,T
+        ST    0,BOUND           SET BOUND = T
+        B     DO1
+DO1END  DS    0H
+        LM    0,15,BUBLSAV
+        BR    10
+        LTORG
+*
+* BUBBLE SORT STORAGE
+BUBLSAV DS    16F
+COUNT   DS    CL12
+BOUND   DS    F
+T       DS    F
+STRTMP  DS    CL29
+*
+*
+*********************************************
+* MERG SUBROUTINE                           *
+*                                           *
+* DESCRIPTION:                              *
+* MERGES THE TWO TABLES INTO ONE            *
+*********************************************
+*
+*
+MERGE   DS    0H
+        STM   2,15,MRGSAV
+        LM    2,6,0(1)
+        SR    7,7     ZEROES OUT R7     
+        SR    8,8     ZEROES OUT R8        
+        SR    9,9     ZEROES OUT R9
+MRGDO1  CR    3,7     WHILE NOT EOT1
+        BNH   MDO1
+MRGDO2  CR    5,8     WHILE NOT EOT2
+        BNH   MDO1
+        MVC   TAB1(30),0(2) MOVE NAME FROM TABLE1
+        MVC   TAB2(30),0(4) MOVE NAME FROM TABLE2
+MRGIF1  CLC   TAB1(20),TAB2
+        BL    IF2
+        BH    IF3
+        BE    IF4
+IF2     DS    0H            IF NAME1 < NAME2
+        MVC   0(30,6),TAB1
+        LA    2,30(2)       INCREMENT POINTER
+        A     7,=F'1'       
+        B     MIF1
+IF3     DS    0H            IF NAME1 > NAME2
+        MVC   0(30,6),TAB2
+        LA    4,30(4)       INCREMENT POINTER
+        A     8,=F'1'        
+        B     MIF1
+IF4     DS    0H            IF NAME1 == NAME2
+        AP    TAB1+21(2),TAB2+21(2)
+        AP    TAB1+25(4),TAB2+25(4)
+        MVC   0(30,6),TAB1
+        LA    2,30(2)       INCREMENT POINTER
+        LA    4,30(4)       INCREMENT TABLE2 POINTER
+        A     7,=F'1'       
+        A     8,=F'1'       
+        B     MIF1
+MIF1    DS    0H
+        LA    6,30(6)       INCREMENT TABLE3 POINTER
+        A     9,=F'1'       INCREMENT TABLE3 COUNTER
+        B     MRGDO1
+MDO1    DS    0H
+MDO3    CR    3,7
+        BNL   MDO2
+        MVC   0(30,6),0(2)
+        LA    2,30(2)       INCREMENT TABLE1 POINTER
+        A     7,=F'1'       
+        LA    6,30(6)       INCREMENT TABLE3 POINTER
+        A     9,=F'1'       INCREMENT TABLE3 COUNTER
+        B     MDO3
+MDO2    DS    0H
+MDO4    CR    5,8    
+        BNL   MRGDO3
+        MVC   0(30,6),0(4) 
+        LA    4,30(4)      INCREMENT TABLE2 POINTER
+        A     8,=F'1'         
+        LA    6,30(6)      INCREMENT TABLE3 POINTER
+        A     9,=F'1'         
+        B     MDO4
+MRGDO3  DS    0H
+        ST    9,0(1)
+        LM    2,15,MRGSAV
+        BR    10
+        LTORG
+*
+* MERGE STORAGE
+TAB1    DC CL31' '
+TAB2    DC CL31' '
+MRGSAV  DS 16F
+*
+*
+MAINSAV DS    16F
+        END MAIN
+ LINUS,BEN           11012345
+ FARADAY,DANIEL      05005555
+ KWON,JIN-SOO        99887766
+ LOCKE,JOHN          45213400
+ QUINN,DANNY         01007899
+ MAITLAND,ABBY       34124389
+ TEMPLE,CONNOR       12345678
+ BURKE,JULIET        23456789
+ AUSTEN,KATE         32198776
+ REYES,HUGO          11223344
+ SHEPARD,JACK        22112211
+ HUME,DESMOND        33554411
+ JARRAH,SAYID        55448765
+ KWON,SUN-HWA        19001919
+ FORD,JAMES          07012345
+ STRAUME,MILES       14012348
+ $
+ CUTTER,NICK         32323299
+ QUINN,DANNY         40090099
+ MAITLAND,ABBY       12127878
+ TEMPLE,CONNOR       01119999
+ LEWIS,JENNY         09434321
+ CUTTER,HELEN        08987123
+ ONEILL,JACK         11654321
+ MITCHELL,CAMERON    09880000
+ JACKSON,DANIEL      10100000
+ CARTER,SAMANTHA     22888899
+ SHEPARD,JACK        19900000
+ HUME,DESMOND        07777099
+ JARRAH,SAYID        03094599
+ KWON,SUN-HWA        03099995
+ $
+/*
+// 

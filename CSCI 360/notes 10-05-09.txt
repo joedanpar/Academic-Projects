@@ -1,0 +1,38 @@
+MAIN	CSECT
+		BAL	R11,BUILD
+		.
+		.
+		.
+		BR	R14
+		LTORG
+TABLE	F'10'
+		LM	R1,R2,D(B)
+		LM	R0,R15,SAVE
+		LM	R3,R2,SAVE
+*************************
+BUILD	DS	0H
+		STM	R0,R15,SAVE
+		LM	R0,R15,SAVE
+		BR	R11
+		LTDRG
+CARD	DC	CL80
+PRINT	DS	0H
+		STM
+		.
+		.
+		.
+		LM
+		BR	LIAKREG
+		LTORG
+PLINE
+		END	MAIN
+
+_________________________
+
+TABLE	DS	50F
+EOT		DS	F
+PLIST	DC	A(TABLE,EOT)
+		DC	A(10,TABLE)
+		DC	F'10'
+		LA	R1,PLIST
+		BAL	R11,BUILD
