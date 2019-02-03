@@ -1,0 +1,32 @@
+Double Right Rotation:
+	a) single left rotation at LC
+	b) single right rotation at P
+	Logic:
+		1. LC = P->left;, NP = LC->right;
+		2. Adjust balance factors;
+			a. if (NP is RIGHT_HEAVY): P->bf = BALANCED, LC->bf = LEFT_HEAVY;
+			b. if (NP is BALANCED): P->bf = LC->bf = BALANCED;
+			c. if (NP is LEFT_HEAVY): P->bf = RIGHT_HEAVY; LC->bf = BALANCED;
+		3. NP->bf = BALANCED;
+		4. LC->right = NP->left;
+		5. NP->left = LC;
+		6. P->left = NP->right;
+		7. NP->right = P;
+		8. Make parent of P point to NP instead;
+
+#1: "Bottom up" insertion - recursive
+	if(newItem < current->data)
+		{
+		r_insert(newItem, current->left, reviseBalance /*bool flag that you can check to see if we need to adjust balance factors*/);
+		adjust balance factor for this node or rotate
+		}
+	else
+		{
+		r_insert(newItem, current->right, reviseBalance);
+		adjust or rotate
+		}
+#2: "Top down" insertion - non-recursive
+	 - pivot = deepest node with b.f. of +1/-1
+	 - pivotParent =  parent of pivot
+	 - current = current node.  Insert when this becomes NULL
+	 - prev = parent of current

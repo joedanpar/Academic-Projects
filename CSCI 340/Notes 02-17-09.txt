@@ -1,0 +1,164 @@
+Binary Trees
+Definition: A finite set of nodes that is either empty, or consists of
+a root and the elements of two disjoint binary trees called the
+left and right subtrees of the root.
+
+Array Representation
+ - Store root at index 0.  For each node at index k,
+ store left child at 2k+1 and right child at
+ 2k+2.  Index outside bounds of array, or NULL (or
+ whatever) represents missing child.
+ - Compact storage, better locality of reference, easy
+ to compute locations of children or parent.
+ - Only practical for trees that are complete / almost complete
+
+Linked representation
+ - Define a node class with:
+     - pointer to root of left subtree
+	 - pointer to root of right subtree
+	 - data
+	 - (optional) pointer to parent
+ - Define tree class with:
+	 - pointer to root (NULL if tree is empty)
+	 - other data members (size, height, etc.) as desired
+ - Advantages:
+	 - Practical no matter what the shape of the tree is
+ - Disadvantages:
+	 - Pointer overhead.  Tree with N nodes has N+1 NULL links
+	 - No direct access to a node's parent without extra pointer.
+
+Tree Traversal Algorithms
+ - O(N)
+ - Deoth-first traversals
+	 - Preorder
+	 - Inorder
+	 - Postorder
+ - Breadth-first / "level-by-level" traversal
+
+Recursive Depth-first Traversals
+ - Preorder:
+     template <class T>
+	 void BTree<T>::preorder_traversal() const
+		 {
+		 if(root != NULL)
+			 pre_trav(root);
+		 }
+	 template<class T>
+	 void BTree<T>::pre_trav(TNode<T>* ptr) const //More Efficient
+		 {
+		 cout << ptr->data << endl;
+		 if(ptr->left != NULL)
+			 pre_trav(ptr->right);
+		 if(ptr->right != NULL)
+			 pre_trav(ptr->right);
+		 }
+		 ----------OR----------
+	 template<class T>
+	 void BTree<T>::pre_trav(TNode<T>* ptr) const //Simple Version
+		 {
+		 cout << ptr->data << endl;
+		 pre_trav(ptr->left);
+		 pre_trav(ptr->right);
+		 }
+ - Inorder:
+     template <class T>
+	 void BTree<T>::inorder_traversal() const
+		 {
+		 if(root != NULL)
+			 in_trav(root);
+		 }
+	 template<class T>
+	 void BTree<T>::in_trav(TNode<T>* ptr) const //More Efficient
+		 {
+		 if(ptr->left != NULL)
+			 pre_trav(ptr->right);
+		 cout << ptr->data << endl;
+		 if(ptr->right != NULL)
+			 pre_trav(ptr->right);
+		 }
+		 ----------OR----------
+	 template<class T>
+	 void BTree<T>::in_trav(TNode<T>* ptr) const //Simple Version
+		 {
+		 pre_trav(ptr->left);
+		 cout << ptr->data << endl;
+		 pre_trav(ptr->right);
+		 }
+ - Postorder:
+     template <class T>
+	 void BTree<T>::postorder_traversal() const
+		 {
+		 if(root != NULL)
+			 post_trav(root);
+		 }
+	 template<class T>
+	 void BTree<T>::post_trav(TNode<T>* ptr) const //More Efficient
+		 {
+		 if(ptr->left != NULL)
+			 pre_trav(ptr->right);
+		 if(ptr->right != NULL)
+			 pre_trav(ptr->right);
+		 cout << ptr->data << endl;
+		 }
+		 ----------OR----------
+	 template<class T>
+	 void BTree<T>::post_trav(TNode<T>* ptr) const //Simple Version
+		 {
+		 pre_trav(ptr->left);
+		 pre_trav(ptr->right);
+		 cout << ptr->data << endl;
+		 }
+
+Simple Version:
+ - N nodes, N+1 NULL links
+ - checks for NULL pointer where node _DOES_ exist
+ - N+1 checks where pointer _IS_ NULL
+ - N+1 method calls for NULL links
+Complex Version:
+ - 1 check for empty tree
+ - N*2 checks for presence of children
+
+Non-recursive preorder traversal:
+	template<class T>
+	void BTree<T>::preorder_traversal() const
+		{
+		stack<TNode<T>*> s;
+		TNode<T>* p = root;
+		while(!s.empty() /*OR p!= NULL*/)
+			{
+			while(p!= NULL)
+				{
+				cout << p->data << endl;
+				push(p);
+				p = p->left;
+				}
+			if(!s.emptr())
+				{
+				p = s.top();
+				s.pop();
+				p = p->right;
+				}
+			}
+		}
+Non-recursive inorder traversal:
+	template<class T>
+	void BTree<T>::preorder_traversal() const
+		{
+		stack<TNode<T>*> s;
+		TNode<T>* p = root;
+		while(!s.empty() /*OR p!= NULL*/)
+			{
+			while(p!= NULL)
+				{
+				push(p);
+				p = p->left;
+				}
+			if(!s.emptr())
+				{
+				p = s.top();
+				s.pop();
+				cout << p->data << endl;
+				p = p->right;
+				}
+			}
+		}

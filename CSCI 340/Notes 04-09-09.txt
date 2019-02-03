@@ -1,0 +1,33 @@
+The Graph ADT
+ - A graph G = (V,E) consists of a set of vertices V and a set of edges
+   E.  Vertices are sometimes called "nodes", and edges are sometimes called "arcs".
+ - If the edges are ordered (indicated with arrows), the graph is directed and (v,w) != (w,v).
+ - Edges may have "weights" or "costs" associated with them.  Some graphs
+   allow negative edge weights.
+ - Vertex w is adjacent to v if and only if (v,w) is an edge in E.
+ - A path is a sequence of vertices w1, w2, w3, ..., wn such that (wi, wi+1) are edges in the graph.
+ - The length of a path is the number of edges (or in a weighted graph, the sum of
+   the edge weights).
+ - directed acyclic graph (DAG)
+
+Representing Graphs in Storage
+1. Adjacency Matrix - better for dense graph
+     - 2D array of V*V elements.
+	 - 1 indicates existence of edge, 0 indicates absense
+2. Adjacency List - better for sparse graph
+	 - 1D array of linked lists.
+
+CSCI240 -> NULL
+CSCI241 -> CSCI240 -> NULL
+CSCI340 -> CSCI241 -> NULL
+CSCI463 -> NULL
+CSCI480 -> CSCI340 -> CSCI463 -> NULL
+CSCI580 -> CSCI340 -> CSCI480 -> NULL
+
+list<...>* prereqs;
+prereqs = new list<...>[numCourses];
+
+ - Array of numCourses strings to hold course names.
+ - Array of numCourses list<int> for adjacency list.
+ - int size
+ - courseIDList[(*itr)]

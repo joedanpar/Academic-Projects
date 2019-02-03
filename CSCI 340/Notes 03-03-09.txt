@@ -1,0 +1,47 @@
+BSTNode class
+ - May contain data needed
+   for printScoreList()
+   (name, Zid, grade)
+ - Constructor, get/set
+   methods
+ - Does not have to be
+   a template
+
+BSTree class
+ - root
+ - insert()
+ - constructor/destructor
+ - inorder_traversal()
+
+if(ptr == NULL)
+	insert the new node at this null link
+else
+	if(grade for new node to insert < grade in current node)
+		move ptr down left subtree
+	else if(grade for new node > grade in current node)
+		move ptr down right subtree
+	else
+		if(Zid in new node < Zid in current node)
+			move ptr down left subtree
+		else
+			move ptr down right subtree
+
+z306954 C	->	  z009284 A
+z296103 C		  z148062 A
+z148062 A		  z101395 B
+z101395 B	->	  z414983 B
+z009284 A		  z102886 C
+z414983 B		  z296103 C
+z102886 C	->	  z306954 C
+
+printScoreList()
+ - Declare a new empty BSTree
+ - Loop through StudentList
+	 - Search for matching course; if found, insert into tree
+ - Perform inorder traversal of tree
+
+AVL Trees (02-24-09)
+Subcase 3b: The pivot node is LEFT_HEAVY or RIGHT_HEAVY and we insert into the same (heavier) subtree
+ - right subtree of left child = double right rotation
+	 or
+ - left subtree of right child = double left rotation

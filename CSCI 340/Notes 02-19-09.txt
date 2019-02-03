@@ -1,0 +1,106 @@
+Binary Search Tree
+ - Insert
+ - Search
+ - Delete
+
+Insert
+ - If the tree is empty, insert as root.
+ - Otherwise, insert as a new leaf node.
+
+//Non-recursive insertion into BST
+template<class T>
+void BST<T>::insert(const T& newItem)
+	{
+	BSNode<T>*	ptr,
+				trail,
+				newNode;
+	trail = NULL;
+	for(ptr = root; ptr!= NULL; )
+		{
+		trail = ptr;
+		if(newItem < ptr->data)
+			ptr = ptr->left;
+		else
+			ptr = ptr->right;
+		}
+	newNode = new BSNode<T>(newItem);
+	//Sets newNode->left and right to NULL.
+	
+	if(trail == NULL)
+		root = newNode;
+	else
+		{
+		if(newItem < trail->data)
+			trail->left = newNode;
+		else
+			trail->data = newNode;
+		}
+	}
+
+//Recursive insert v.1
+template<class T>
+BSNode<T>* BST<T>::r_insert(const T& newItem, BSNode<T>* ptr)
+	{
+	if(ptr == NULL)
+		{
+		BSNode<T>* = new BSNode<T>(newItem);
+		return newNode;
+		}
+	//else if(newItem == ptr->data)
+	//	  return ptr;
+	
+	else if(newItem < ptr->data)
+		{
+		ptr->left = r_insert(newItem, ptr->left);
+		return ptr;
+		}
+	else
+		{
+		ptr->right = r_insert(newItem, ptr->right);
+		return ptr;
+		}
+	}
+
+//Recursive insert v.2
+template<class T>
+void BST<T>::r_insert(const T& newItem, BSNode<T>*& ptr)
+	{
+	if(ptr == NULL)
+		{
+		ptr = new BSNode<T>(newItem);
+		}
+	//else if(newItem == ptr->data)
+	//	  return;
+	
+	else if(newItem < ptr->data)
+		{
+		r_insert(newItem, ptr->left);
+		}
+	else
+		{
+		r_insert(newItem, ptr->right);
+		}
+	}
+
+Search
+ - Loops through same as insert
+ - if less, go left
+ - if more, go right
+ - if equal, found/return
+ - if null, not found
+
+Delete
+ - delete leaf node = replace with NULL
+ - delete node with 1 child = replace with child
+ - delete node with 2 children:
+     - replace with inorder successor
+	 - replace with inorder predecessor
+	 - delete by copying
+		 - Subcase A: go right, but can't go left = replaceParent == delNode
+			1. Set replace->left to point to delNode->left
+			2. Set correct link in delParent to point to replace
+		 - SubCase B: go right, then all the way left
+			1. replaceParent->left = replace->right;
+			2. replace->right = delNode->right;
+			3. replace->left = delNode->left;
+			4. As above

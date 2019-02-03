@@ -1,0 +1,10 @@
+AVL Tree definition and insertion logic
+B-tree definition and insertion logic
+Graph definition
+	Graph traversals
+	Graph representations in storage
+	Dijkstra's Algorithm
+Hashing
+Sorting
+	Shell sort
+	

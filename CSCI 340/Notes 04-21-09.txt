@@ -1,0 +1,72 @@
+Collision Resolution Techniques
+1. Open Addressing - all elements stored in hash table. The table
+					 can become full.
+	A. Linear probing
+		Insert: hash key to find initial slot.  If empty, insert record in that slot.  If not
+				empty, perform linear search (with wraparound) until you find an empty slot,
+				or you get back to the initial slot (table is full).
+		Lookup: hash key to find initial slot.  If empty, not found.  If occupied but not the key you're
+				looking for, perform linear search until a) key is found, b) empty slot is found, or c) you
+				return to the starting point.
+		Delete: Mark slot as deleted, rather than resetting it to empty.
+	B. Quadratic probing - instead of offsetting by +1 in search,
+						   offset by +(c[1]i + c[2]i^2), where i is probe number (starting with 0)
+						   and c[1] and c[0] are non-zero constants.
+	C. Double hasing - when you have a collision, hash key again with different hash
+					   function.
+2. Chaining
+	A. Seperate chaining
+
+load factor (lambda) =	# of keys in table
+						------------------
+						# of table slots
+
+Insert (1 + 1 / (1 - (lambda)^2) / 2
+
+h1 (key) = key % size
+h2 (key) = 1 + (key % size`)
+where size` is chosen to be slightly less than size (say, size-1 or size-2)
+
+Quick Sort
+
+template<class T>
+void quicksort(T data[], int first, int last)
+	{
+	int lower = first+1,
+		upper = last;
+	swap(data[first], data[(first+last)/2)];
+	T bound = data[first];
+	while(lower <= upper);
+		{
+		while (data[lower] < bound)
+			lower++;
+		while (bound < data[upper])
+			upper--;
+		if(lower < upper)
+			swap(data[lower++],data[upper--]);
+		else lower++;
+		}
+	swap(data[upper], data[first]);
+	if(first < upper-1)
+		quicksort (data, first, upper-1);
+	if(upper+1 < last)
+		quicksort (data, upper+1, last);
+	}
+
+template<class T>
+void quicksort(T data[], int n)
+	{
+	int i,
+		max;
+	if (n < 2)
+		return;
+	for(i = 1, max = 2; i < n; i++)
+		{
+		if (data[max] < data[i])
+			max = i;
+		swap(data[n-1, data[max]);
+		quicksort(data, 0, n-2);
+		}
+	}
+
+quicksort vector<StudentGrade>& data, ...)

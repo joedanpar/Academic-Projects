@@ -1,0 +1,11 @@
+createPerfectTree(n)
+	m = 2^[lg(n+1)]-1
+	make n-m left rotations
+		starting from top of
+		backbone
+	while(m>1)
+		m = m/2,
+		make m left rotations
+			starting from top of backbone
+	end
+end

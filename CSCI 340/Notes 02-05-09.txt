@@ -1,0 +1,40 @@
+SINGLY LINKED LIST
+____________________________________________________________________________________________
+Insertion at head of list:		O(1)
+Remove node at head of list:	O(1)
+Retrieve data in head node:		O(1)
+insertion at tail of list:		O(1) (with a pointer to tail node)
+retrieve data in tail node:		O(1) ("							")
+Remove tail node:				O(N) (unless we also have a pointer to the 2nd to last node)
+Traversal, destroy, copy, etc.	O(N)
+	search, delete any node
+
+
+DOUBLY LINKED LIST
+____________________________________________________________________________________________
+Insertion at head of list:		O(1)
+Remove node at head of list:	O(1)
+Retrieve data in head node:		O(1)
+insertion at tail of list:		O(1) (with a pointer to tail node)
+retrieve data in tail node:		O(1) ("							")
+Remove tail node:				O(N) (unless we also have a pointer to the 2nd to last node)
+Traversal, destroy, copy, etc.	O(N)
+	search, delete any node
+
+
+Techniques for Improving List Search
+____________________________________
+1.	Ordering
+2.	Move to first
+3.	Transpose
+4.	Count
+
+
+Skip List
+__________________
+Search:	O(log2[N])
+Node<T>** next;
+
+
+Sparse Lists
+____________

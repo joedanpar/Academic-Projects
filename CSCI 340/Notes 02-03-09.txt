@@ -1,0 +1,93 @@
+List methods.
+
+- Default constructor
+- Destructor (calls clear())
+- void clear() (remove node at head until empty)
+- bool isEmpty() const
+- void print() const
+- Node<T> * clone(Node<T> *)
+	- make a copy of the list
+- List(const List<T> &)
+	- copy constructor
+- const List<T> & Operator= (const List<T> &)
+- void addToHead(const T &)
+
+
+
+Node<T> * isInList(constT &) const
+	{
+	return r_isInList();
+	}
+
+Node<T> * r_isInList(const T &, Node<T> * ptr) const
+	{
+	if (/*ptr is NULL*/)
+		return null;
+	else if (/*ptr points to node with search item*/)
+		return ptr;
+	else
+		return r_isInList(serchItem, ptr->next);
+	}
+	
+
+
+void List::deleteNode(const T &) //can be bool
+	{
+	head = r_deleteNode(delItem, head);
+	}
+
+void List::r_deleteNode(const T & delItem, Node<T> * & ptr) //can be bool
+	{
+	if (ptr == NULL)
+		return;
+	else if (/*match*/)
+		{
+		Node<T> * delNode = ptr;
+		ptr = ptr->next;
+		}
+	else
+		r_deleteNode(delItem, ptr->next);
+	}
+	
+		---OR---
+
+void List::deleteNode(const T & delItem)
+	{
+	head = r_deleteNode(delItem, head);
+	}
+	
+Node<T> * List::r_deleteNode(const T &, Node<T> *)
+	{
+	if (ptr == NULL)
+		return NULL;
+	else if (delItem == ptr->data)
+		{
+		Node<T> * nextNode = ptr->next;
+		delete ptr;
+		return nextNode;
+		}
+	else
+		{
+		ptr->next = r_deleteNode(delItem, ptr->next);
+		return ptr;
+		}
+	}
+
+
+template<class T>
+void List<T>::deleteNode(const T & delItem)
+	{
+	head = r_deleteNode(delItem, head)
+	}
+
+template<class T>
+Node<T> * List<T>::r_deleteNode(const T & delItem, Node<T> * ptr)
+	{
+	if (ptr == NULL)
+		return NULL;
+	else if (ptr->data == delItem)
+		{
+		//delete the node
+		return->next;
+		}
+	}

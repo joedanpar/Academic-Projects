@@ -1,0 +1,86 @@
+RegistrationSystem class
+ - readStudentsFromFile()
+ - print ScoreList()
+
+BSTree class
+ - constructor, destructor
+ - inorder traversal
+ - insert
+
+BSTNode class
+ - constructor, get/set?
+
+1. Reading input File
+	John Smith 333222333 ...
+	CSCI340 ...
+	CSCI231 ...
+	done
+	Linda Ray ...
+	CSCI ...
+	CSCI ...
+
+2. Forget the Stack.  Either
+	 - use your List class from Assignment 2, or
+	 - use the STL list class
+
+ptr->data->courseList.head->data.grade
+(ptr->data->get_courseList().get_head())->get_data().get_grade()
+
+3. The BSTree and BSTNode
+   classes do not have to
+   be template classes.
+
+4. Rather than store a copy
+   of the Student (lots of extra
+   memory used) or a pointer/reference
+   to the student (welcome to syntax hell!)
+   in the Tree node, you may store the data
+   you want in the tree node.
+
+Building the list of Students
+ - For each Student in the file
+	 - create an empty Student
+	 - read the student's info (name, SSN,
+	   ..., Zid, etc.) and put it into the
+	   Student object
+	 - For each course for the student
+		 - create an empty CourseInfo object
+		 - read the info for the course; put it
+		   in the object
+		 - the Student.addCourse(aCourse);
+			 - courseList.push_front(newCourse);
+		 - studentList.push_front(theStudent);
+
+Code to Traverse list of students (in RegistrationSystem)
+list<Student>::iterator studentItr;
+list<CourseInfo>::const_iterator courseItr;
+	*const_iterator*
+for (studentItr = studentList.begin(); studentItr != studentList.end(); studentItr++)
+	{
+	cout << studentItr->get_name() << endl; //Print student's name
+	
+	for(courseItr = (studentItr->get_courseList()).begin();
+	    courseItr != (studentItr->get_courseList()).end();
+		courseItr++)
+		{
+		cout << courseItr->get_courseID() << endl;
+		}
+	}
+
+const list<CourseInfo>& Student::get_courseList() const
+	{
+	return courseList;
+	}
+
+in RegistrationSystem:
+	list<Student> studentList;
+in Student:
+	list<CourseInfo> courseList;
+for
+	{
+		{
+		student s;
+		
+		studentList.push_front(s);
+		}
+	}

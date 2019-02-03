@@ -1,0 +1,44 @@
+Unweighted Shortest Path Algorithm
+ - create a new empty queue
+ - initialize distance to 0
+ - visit start vertex and label it with 0
+ - add start vertex to queue
+ - while destination vertex has not been
+   visited and queue is not empty
+	 - remove vertex v from queue
+	 - if (label[v] > distance)
+		 - distance++
+	 - endif
+	 - for each vertex w adjacent to v
+		 - visit w and label it with distance+1
+		 - add w to queue
+	 - end
+ - end
+ - if destination vertex has not been visited
+	 - destination not reachable
+ - else
+	// find the vertices p[0], ..., p[distance] on
+	// the shortest path
+	 - initialize p[distance+1] to destination vertex
+	 - for k = distance-1 down to 0
+		 - find a vertex p[k] adjacent to p[k+1]
+		   with label k
+	 - end
+ - endif
+
+Dijkstra Algorithm (weighted simple digraph, vertex first)
+	for all vertices v
+		currDist(v) = infinite;
+	end
+	currDist(first) = 0;
+	toBeChecked = all vertices;
+	while toBeChecked is not empty
+		v = a vertex in toBeChecked with minimal currDist(v);
+		remove v from toBeChecked;
+		for all vertices u adjacent to v and in toBeChecked
+			ifcurrDist(u) > currDist(v) + weight(edge(vu))
+				currDist(u) = currDist(v) + weight(edge(vu));
+				predecessor(u) = v;
+			endif
+		end
+	end

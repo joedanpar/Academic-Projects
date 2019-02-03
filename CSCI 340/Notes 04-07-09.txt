@@ -1,0 +1,31 @@
+B* tree - B-tree variant in which nodes must be approximately 2/3 full
+B+ tree - 
+
+map<string, int, great> wordfrequencies;
+	read a word
+	if(word is not in map)
+		wordFrequencies[word] = 1;
+	else
+		wordFrequencies[word] += 1;
+
+wordFrequencies["a"] = 3
+
+Hashing
+ - Many applications require a data structure that is able to insert, retrieve, or
+   delete a named item (dictionary or map ADT).
+ - we would like to support these operations in O(1) time.
+ 
+Direct Address Tables
+ - use key as array subscript
+ - Preconditioning - transforming a non-integer key to an integer so it may be used as a subscript
+ 
+Hash Tables
+ - Use a function that maps large numbers
+   (or strings interpreted as numbers) into smaller,
+   more manageable numbers.
+ - a function that maps an item into a small
+   index is known as a hash function.
+ - a data structure using this technique to implement
+   the dictionary ADT is called a hash table.
+ - Two keys that produce the same
+   index or hash value is called a collision.

@@ -1,0 +1,40 @@
+AVL Trees
+ - Self-adjusting, height-balanced binary search trees
+ - Invented by Adelson-Velskii and Landis
+ - Have O(log2[N]) height and therefore O(log2[N]) worst case lookup, insertion, and deletion times
+ - common choice to implement Map or Dictionary Abstract DataType (ADT)
+ - Balance factor of a node = (height of right subtree) - (height of left subtree)
+ - A node is height-balanced if its balance factor (b.f.) is -1,0, or +1.
+ - An AVL tree is a binary search tree in which all nodes are height-balanced.
+	 - -1 = LEFT_HEAVY
+	 - 0  = BALANCED
+	 - +1 = RIGHT_HEAVY
+
+Height of a binary tree - max. parth length from the root to a leaf.
+ - Counting edges
+	 - tree w/one node: height = 0
+	 - empty tree: heigh = -1
+ - Counting nodes
+	 - tree w/one node: height = 1
+	 - empty tree: height = 0
+
+AVL Tree Insertion
+ - Insert as per binary search tree logic, then adjust tree as needed
+ - Only nodes along the path of insertion are affected
+ - 3 cases for node along path of insertion
+	1. Node was BALANCED; insertion makes it LEFT_HEAVY or
+	   RIGHT_HEAVY.  Adjust balance factor accordingly
+	2. Node was LEFT_HEAVY or RIGHT_HEAVY; insertion in opposite (lighter)
+	   Subtree makes it BALANCED.  Adjust b.f.
+	3. Node was LEFT_HEAVY or RIGHT_HEAVY; insertion into the same (heavier)
+	   Subtree puts it out of balance (b.f. would now be +2 or -2).  Perform
+	   AVL rotation to rebalance the tree.  All nodes above this one
+	   along the path of insertion will not require further adjustment.
+	   
+	   pivot/parent node - deepest node along path of insertion that is LEFT_HEAVY or RIGH_HEAVY
+
+4 Types of AVL rotation:
+	1. single right rotation
+	2. single left rotation
+	3. double right rotation
+	4. double left rotation

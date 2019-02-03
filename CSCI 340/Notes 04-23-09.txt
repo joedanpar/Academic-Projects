@@ -1,0 +1,12 @@
+divide data into h subarrays;
+	for i = 1 to h
+	sort subarray data[i];
+sort array data;
+
+determine numbers h[1] ... h[i] of ways of dividing array data into subarrays;
+for (h = h[i]; t > 1; t--, h = h[i])
+	divide data into h subarrays;
+	for i = 1 to h
+		sort subarray data[i];
+sort array data;
+

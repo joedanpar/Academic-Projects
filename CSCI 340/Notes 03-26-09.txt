@@ -1,0 +1,29 @@
+http://www.cmcrossroads.com/bradapp/ftp/src/libs/c++/AvlTrees.html
+
+Homogeneous configuration:
+R is left child of Q, which is left child of P - right rotation at P, then right rotation at Q
+R is right child of Q, which is right child of P - left rotation at P, then left rotation at Q
+
+Heterogeneous configuration:
+R is right child of Q, which is left child of P - left rotation at Q, then right rotation at P
+R is left child of Q, which is right child of P - right rotation at Q, then left rotation at P
+
+Heap
+ - An almost complete binary tree (one that is perfectly balanced, and the
+   leaves in the last level are all in the leftmost positions)
+ - In a max heap, the key of each parent >= keys of its children
+ - In a min heap, the key of each parent <= keys of its children
+ - Representing heaps in storage: usually stored in an array:
+	 parent of k = k/2
+	 left child of k = 2k+1
+	 right child of k = 2k+2
+Possible Uses:
+ - priority queue ADT
+push() logic:
+ - increment rear
+ - copy new item to array[rear]
+ - moveup(array, rear) //move new item up heap to recreate max heap propery
+pop() logic:
+ - swap array[0] and array[rear]
+ - decrement rear
+ - move Down(array, 0, rear)

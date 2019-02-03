@@ -1,0 +1,15 @@
+vector<CourseInfo> v;
+
+vector<CoursInfo>::iterator pos;
+
+for (pos = * begin(); pos ~= vend(), posH)
+	{
+	cout<< *pos << endl;
+	pos->get_courseID();
+	}
+	
+//fill vector with data
+
+//copy vector into set
+
+set<CourseInfo> s(v.begin(), v.end());

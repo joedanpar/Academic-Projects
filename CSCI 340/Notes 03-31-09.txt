@@ -1,0 +1,18 @@
+Comparable<KeyType>* // <StudentGrade>
+
+Expression Trees
+A+B infix
++AB prefix
+AB+ postfix
+
+A+B/C	->	ABC/+
+vs.
+(A+B)/C	->	AB+C/
+
+1. Fully parenthesize infix expression
+2. Replace each ) with operator for that subexpression
+3. Remove all (
+
+ (A+ (B- C/X) *D) /E
+((A+((B-(C/X))*D))/E)
+  A   B  C X/-D*+ E/

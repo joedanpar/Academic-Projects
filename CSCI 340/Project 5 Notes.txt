@@ -1,0 +1,66 @@
+What you will need for Project 5
+--------------------------------
+
+1. Your Person, Student, CourseInfo, and RegistrationSystem classes and driver program
+   from Project 4. Most of these can be used unchanged. You will not need your binary 
+   search tree class (ignore the line in the assignment about making the AVL tree a 
+   derived class of your binary search tree).
+
+2. The Avl.h and Comparable.h files from this folder on Blackboard. These files are from
+   the site linked to in the Project 5 assignment sheet, with several bugs fixed.
+
+3. One (possibly new) class to contain the extracted info about a student's grade in a 
+   course. Let's assume this class is called StudentGrade; the details are outlined
+   below.
+
+
+The StudentGrade class
+----------------------
+
+Data members: name, zid, and grade (all strings).
+
+Methods: Constructor, set and get methods, plus the following:
+
+* You must overload operator==. This method should return true if the names, z-ids, and 
+  grades for the two StudentGrade objects being compared are all equal; otherwise, return
+  false.
+
+* You must overload operator<. This method should return true if the grade of the left
+  operand is less than the grade of the right operand and false if the grade of the left
+  operand is greater than the grade of the right operand. If the grades are equal, the
+  method should return true if the z-id of the left operand is less than the z-id of the 
+  right operand and false if not.
+
+* You must overload operator<<. This standalone function should print the three data members
+  of a StudentGrade object on a single line.
+
+
+Modifications to your RegistrationSystem class
+----------------------------------------------
+
+You will need to #include "Avl.h".
+
+In the printScoreList() method of your RegistrationSystem class, declare an AVL tree to 
+hold the student grade information that your search locates:
+
+   AvlTree<StudentGrade> gradeTree;
+
+You can insert a new item into the AVL tree using the following steps:
+
+   1. Create a StudentGrade object from the name, z-id, and grade your search has found:
+
+      StudentGrade gradeFound(..., ..., ...);
+
+      (This StudentGrade object can be used repeatedly and over.)
+
+   2. Dynamically create a Comparable object to contain your StudentGrade object:
+
+      Comparable<StudentGrade>* newItem = new Comparable<StudentGrade>(gradeFound);
+
+   3. Insert the Comparable object into the AVL tree:
+
+      gradeTree.Insert(newItem);
+
+You can print a listing of the AVL tree by calling the DumpTree() method:
+
+   gradeTree.DumpTree(cout);

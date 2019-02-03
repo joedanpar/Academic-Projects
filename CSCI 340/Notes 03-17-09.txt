@@ -1,0 +1,68 @@
+Midterm Exam on Thursday
+ - 16 multiple choice, 2 points each
+ - 8 coding / demonstrate questions
+
+Complexity Analysis
+ - know definitions of Big O, Omega, Theta
+	 - Big O = upper limit on time
+	 - Omega = lower limit on time
+	 - Theta = combination of both
+ - Be able to rank complexities (is O(n) faster than O(n^2)?)
+ - Be able to identify the complexity of simple algorithms
+
+Inheritance & polymorphism
+ - Be able to create a derived class of another class using public inheritance
+ - understand that inheritance is used to represent "is a" relationship
+ - understand the effects of inheritance on public, private, and protected members in the base class
+ - virtual methods, dynamic vs. static binding
+ - "pure" virtual methods
+ - what is polymorphism?
+
+Data Structures
+ - Stack ADT
+	 - array implementation
+	 - linked implementation
+ - Queue ADT
+	 - array implementation
+	 - linked implementation
+ - Linked lists
+ - Deque ADT
+	 - array implementation
+	 - linked implementation
+ - binary search tree
+	 - traversals
+	 - insert, delete
+
+Iterators & STL container classes
+ - list, vector, deque
+
+
+Threaded Binary Trees
+ - A binary tree with N nodes has N+1 NULL links,
+   which are effectively wasted space.
+ - These NULL links may be replaced by pointers called
+   threads designed to make a particular tree traversal
+   easier (ie, no longer needs recursion)
+
+Threading tree for inorder traversal (L->R):
+ - A NULL right link becomes a thread that points to the node's inorder successor
+ - we need to indicate whether or not a given pointer is a thread.
+	short int successor: 1; //0=link, 1=thread
+ - A NULL left link becomes a thread that points to the node's inorder predecessor
+
+Building an inorder threaded binary tree
+ - Insert much like in the usual algorithm (except we insert at a thread, not necessarily a NULL link)
+	 - If inserting to the right of parent/prev:
+		newNode->right = prev->right;
+		newNode->successor = prev->successor;
+		newNode->left = prev;
+		newNode->predecessor = 1;
+		prev->right = newNode;
+		prev->successor = 0;
+	 - If inserting to the left of prev:
+		newNode->left = prev->left;
+		newNode->predecessor = prev->predecessor;
+		newNode->right = prev;
+		newNode->successor = 1;
+		prev->left = newNode;
+		prev->predecessor = 0;

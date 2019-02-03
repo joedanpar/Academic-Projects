@@ -1,0 +1,20 @@
+A B-tree of order m^1 is a multiway search tree with the
+following properties:
+	1. The root has at least two subtrees unless it is a leaf.
+	2. Each non-root and non-leaf node holds k-1 keys and k
+	   pointers to subtrees where [m/2] <= k <= m //rounded up
+	3. Each leaf node holds k-1 keys where [m/2] <= k <= m //rounded up
+	4. all leaves are on the same level
+^1 - Order specifies the maximum number of children a node may have
+
+B-tree of order 10:
+	template<class KeyType>
+	class BTreeNode
+		{
+		KeyType keys[9];
+		BTreeNode<KeyType>* links[10];
+			.
+			.
+			.
+		};
+

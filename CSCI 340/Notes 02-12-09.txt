@@ -1,0 +1,77 @@
+template <class T>
+Class Stack
+	{
+	private:
+	list<T> stackSpace;
+	int count
+	static const int MAXSIZE = 10;
+	
+	public:
+	Stack();
+	void push(const T &);
+	T * pop();
+	}
+	
+Stack::Stack()
+	{
+	count = 0;
+	}
+	
+void Stack::push(const T &)
+	{
+	addToHead();
+	count++;
+	}
+	
+template <class T>
+T * Stack::pop()
+	{
+	
+	}
+	
+bool isFull()
+	{
+	
+	}
+
+____________________________________________________
+
+/************************************************
+*												*
+*				CHANGES TO STUDENT				*
+*_______________________________________________*
+* - data members - replace list with stack		*
+* - addCourse() - calls push(), checks if full	*
+* - deleteCourse() - calls pop()?				*
+*	- OR just take it out						*
+* - checkCourseTaken() - ditto					*
+************************************************/
+
+____________________________________________________
+
+Regristration System
+
+ - Contains a List of Students
+ - addStudent()
+ - addCourse() for a given student
+
+____________________________________________________
+
+push()
+
+1. Create new node, put item in it, set next to NULL
+2. if (queue is empty)
+       head = newNode;
+   else
+       tail->next = newNode;
+3. tail = newNode;
+
+
+pop()
+
+1. Check if empty
+2. delNode = head;
+3. head = delNode->next;
+4. delete delNode;
+5. if (head == NULL)
+	   tail = NULL;

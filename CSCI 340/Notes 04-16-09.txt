@@ -1,0 +1,13 @@
+6 //# of vertices
+CSCI240	CSCI241
+.	^	.	^
+.	|	.	|
+.	|	.	|
+	|		|
+	Course1	Course2
+
+courseIDList	prereqLists
+list<string> * prereqLists;
+prereqLists = new list<string>[numVertices];
+prereqLists[sub2].pushback(course1);
+

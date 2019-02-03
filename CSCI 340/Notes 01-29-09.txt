@@ -1,0 +1,6 @@
+void addCourse(const CourseInfo &);
+
+void Student::addCourse(const CourseInfo & input)
+	{
+	
+	}
