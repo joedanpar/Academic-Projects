@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>NIU GDA</title>
+<script language="javascript" src="thejavas.js">
+</script>
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+
+<body id="pants" onLoad="bgstuff()">
+	<div class="top">
+		<div class="logo">
+			<img src="images/logosmalls.png" alt="NIU GDA">
+		</div>
+		<div class="nav"><a id="navlink" class="active" href="#">Home</a> <a href="about.html">About Us</a> <a href="projects.html">Projects</a> <a href="http://z13.invisionfree.com/NGDA/index.php">Forums</a></div>
+	</div>
+
+	<div class="mbody">
+		<div class="wrapper">
+            <div class="cont">
+            <p>
+		      Welcome to the Game Developers Association of NIU webiste!</p>
+            <p><span class="title">Blog Updates</span><br>
+              <br />
+              <span class="date">Decembet 1st, 2010:</span>
+              <br />
+              Finally! everything is ready to be published.  Let us know what you think. <br>
+              <br>
+              <span class="date">November 27th, 2010:</span>
+              <br />
+Well, we've finally got the rest of the framework done.  Will post when more content is added.<br>
+<br />
+              <span class="date">November 20th, 2010:</span>
+              <br />
+              Work is still being conducted on the framework of the site.  More updates soon.
+              <br />
+              <br />
+            </p>
+</div>
+            <div class="tweetweet">
+            <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 6000,
+  width: 200,
+  height: 600,
+  theme: {
+    shell: {
+      background: '#333333',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#000000',
+      color: '#ffffff',
+      links: '#eb0707'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: true,
+    behavior: 'all'
+  }
+}).render().setUser('NIUGDA').start();
+</script>     
+            </div>
+		</div>
+	</div>
+	<div style="height: 20px; width: auto;" class="spacer"></div>
+	<div class="bottom">
+		NIUGDA &copy; 2010
+	</div>
+    <div class="javaing">
+      <p>Pick a theme<br>
+        <br>
+      <img onClick="initRed()" id="redt" src="images/red.png" width="51" height="29"><img onClick="initGreen()" id="greent" src="images/green.png" width="51" height="29"><img onClick="initBlue()" id="bluet" src="images/blue.png" width="51" height="29"><img id="blackt" src="images/black.png" width="51" height="29" onClick="initBlack()"></p>
+</div>
+
+</body>
+</html>

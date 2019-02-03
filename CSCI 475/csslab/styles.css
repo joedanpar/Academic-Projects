@@ -1,0 +1,125 @@
+@charset "utf-8";
+/* Make sure to read all of the comment sections in this file. */
+
+/* Reset 
+Different browser gives different properties about margins, divs, for example.  We want to reset
+properties to a baseline for every browser. This does not make up for everything, but it goes a long way. 
+----------------------------------------------------------------------------------- */
+
+html, body {
+	margin: 0; padding: 0; border: 0; background: transparent; font-size:12px; }
+
+div, article, aside, dialog, figure, footer, header, hgroup, 
+nav, section, span, h1, h2, h3, h4, h5, h6, p, blockquote, a, img, 
+strike, strong, em, ol, ul, li, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0; padding: 0; border: 0; outline: 0; vertical-align: baseline; background: transparent; }
+
+article, aside, dialog, figure, footer, header, hgroup, nav, section { display:block; }
+
+h1, h2,h3, h4, h5, h6, p, li, blockquote, td, th, a, caption, em, strong, b, i, u, strike { 
+	font-family: Arial, Helvetica, sans-serif; 	font-size:100%; 	font-weight: normal; font-style: normal; line-height: 1;  text-indent: 0; text-decoration: none; text-align: left; color: #000; }
+
+ol, ul { list-style: none; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+/* Global 
+------------------------------------------------------------- */
+
+body { background-color:#BFFEB4; }
+
+
+/* Containers 
+------------------------------------------------------------ */
+/* For the wrapper, set width to 900px, top and bottom margins of 0 and center for the alignment.
+Also, include 1 px dotted, left and right borders.
+ */
+#wrapper 			{ width: 900px; margin-top: 0px; margin-bottom: 0px; margin: auto; margin-left: 1px dotted; margin-right: 1px dotted; }
+
+/* For the top section, set width to 100%, 25 px height and black color for the background. */
+#top 				{ width: 100%; height: 25px; background: #000; }
+
+/* For the banner section, set width to 900px and height to 100px. */
+#banner 			{ width: 900px; height: 100px; }
+
+/* For the subbanner section, include the background image; use the image named banner_03.jpg (one
+of the images you copied from my directory. The width and height of this image is 900 x 250 px.*/
+#subbanner 			{ background: "/images/sub-banner.jpg"; width: 900px; height: 250px; }
+
+/* Add code for formatting the navigational elements here.  Refer to the DeKalb Landscaping design handout 
+Please include the hover effect as we discussed in class.*/
+#topnav ul			{ background: #040; }
+#topnav ul li		{ display: inline; }
+#topnav ul li a		{ margin: 30px; color: #FFF; }
+#topnav a:hover		{ Add your code here. }
+
+/* As you can see on the DeKalb Landscaping design handout, the padding for the entire content area is 
+approximately 30px and white background color. You will need to add code to format the text in h1, h2, and p.  
+Also, for the images in the content section -- padding, border, margin and background 
+color for the image, which is white.  */
+#content 			{ padding: 30px; background: #FFF; }
+#content h1			{ font-size: 24px; font-weight: bold; }
+#content h2			{ font-size: 16pt; font-weight: bold; }
+#content p			{ padding: 10px; }
+#content img		{ padding: 5px; border: 1px solid #444; margin: 5px; }
+
+/* Refer to the DeKalb Lanscaping design handout and format the footer area approriately.*/
+#footer 			{ color: #FFF; background: #040; padding: 5px; }
+
+
+/* General Classes 
+Add class code for the thin-bottom-white line and the thick-bottom-white line here.
+You are welcome to use the other classes shown below.
+------------------------------------------------------- */
+
+.bdr-thin-bottom-white { border-bottom: 1px #fff solid; }
+.bdr-thick-bottom-white { border-bottom: 2px #fff solid; }
+.footer-text	{ text-align:center; color:#fff; font-weight:bold; }
+.right	{ text-align:right; }
+.left	{ text-align:left; }
+
+
+/* Table Formatting 
+For the table element, make the width of 500 px, left and right margins of 20 px and center it.  The table
+also has 1 px dotted line, you pick a color for the dotted line.
+Include a background color (you choose) for the heading and footer sections.
+Format the table heading elemements with the padding of 8px and center alignment.
+Format the table row to include a bottom border with a color (you choose) and dotted.
+Include a background color (you choose) for the hover effect for rows within the body of the table.
+------------------------------------------------------- */
+
+table			{ width: 500px; margin-left: 20px; margin-right: 20px; margin: auto; border: 1px dotted #090; }
+thead, tfoot	{ background: #0A0; }
+th, td			{ padding: 8px; align: center; margin: auto; }
+th				{ padding: 8px; margin: auto; }
+tbody tr		{ border-bottom: #050; }
+tbody tr:hover	{ background: #AFA; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
